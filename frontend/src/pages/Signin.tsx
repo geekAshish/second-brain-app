@@ -4,23 +4,36 @@ import { Input } from "../components/Input";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export function Signin() {
   const usernameRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
   const navigate = useNavigate();
 
+  const onSuccessNotify = () => toast("You have signed in!");
+  const onErrorNotify = (msg: string) => toast(msg, { type: "error" });
+
   async function signin() {
     const email = usernameRef.current?.value;
     console.log(usernameRef.current);
     const password = passwordRef.current?.value;
-    const response = await axios.post(BACKEND_URL + "/api/v1/auth/login", {
-      email,
-      password,
-    });
-    const jwt = response.data.access_token;
-    localStorage.setItem("token", jwt);
-    navigate("/dashboard");
+
+    try {
+      const data = await axios.post(BACKEND_URL + "/api/v1/auth/login", {
+        email,
+        password,
+      });
+      localStorage.setItem("access_token", data?.data?.access_token);
+      onSuccessNotify();
+
+      setTimeout(() => {
+        // navigate("/signin");
+        navigate("/dashboard");
+      }, 1000);
+    } catch (err) {
+      onErrorNotify(err?.response.data?.msg);
+    }
   }
   return (
     <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
@@ -37,6 +50,8 @@ export function Signin() {
           />
         </div>
       </div>
+
+      <ToastContainer position="bottom-right" hideProgressBar={true} />
     </div>
   );
 }

@@ -4,30 +4,47 @@ import { Input } from "../components/Input";
 import axios from "axios";
 import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
 
 export function Signup() {
+  const emailRef = useRef<HTMLInputElement>();
   const usernameRef = useRef<HTMLInputElement>();
   const passwordRef = useRef<HTMLInputElement>();
   const navigate = useNavigate();
 
+  const onSuccessNotify = () => toast("You have signed up!");
+  const onErrorNotify = (msg: string) => toast(msg, { type: "error" });
+
   async function signup() {
-    const email = usernameRef.current?.value;
-    console.log(usernameRef.current);
+    const username = usernameRef.current?.value;
+    const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
-    await axios.post(BACKEND_URL + "/api/v1/auth/register", {
-      email,
-      password,
-    });
-    navigate("/signin");
-    alert("You have signed up!");
+    try {
+      const data = await axios.post(BACKEND_URL + "/api/v1/auth/register", {
+        username,
+        email,
+        password,
+      });
+
+      localStorage.setItem("access_token", data?.data?.access_token);
+      onSuccessNotify();
+
+      setTimeout(() => {
+        // navigate("/signin");
+        navigate("/dashboard");
+      }, 1000);
+    } catch (err) {
+      onErrorNotify(err?.response.data?.msg);
+    }
   }
 
   return (
     <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
-      <div className="bg-white rounded-xl border min-w-48 p-8">
-        <Input reference={usernameRef} placeholder="email" />
+      <div className="bg-white rounded-xl border min-w-48 p-4">
+        <Input reference={usernameRef} placeholder="Username" />
+        <Input reference={emailRef} placeholder="Email" />
         <Input reference={passwordRef} placeholder="Password" />
-        <div className="flex justify-center pt-4">
+        <div className="flex justify-center p-2">
           <Button
             onClick={signup}
             loading={false}
@@ -37,6 +54,8 @@ export function Signup() {
           />
         </div>
       </div>
+
+      <ToastContainer position="bottom-right" hideProgressBar={true} />
     </div>
   );
 }
