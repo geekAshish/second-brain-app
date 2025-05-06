@@ -1,10 +1,21 @@
 import { Request, Response } from "express";
+import zod from "zod";
 import { StatusCodes } from "http-status-codes";
 import { User } from "../models/user";
 import { errors } from "../error";
 
+const registerShema = zod.object({
+  username: zod.string(),
+  email: zod.string(),
+  password: zod.any(),
+});
+
 export const register = async (req: Request, res: Response) => {
   const { username, email, password } = req.body;
+
+  const { success } = registerShema.safeParse(req.body);
+
+  console.log(success);
 
   if (!email || !password) {
     throw new errors.BadRequest("Please provide email and password");
