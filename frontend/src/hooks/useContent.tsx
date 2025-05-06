@@ -9,7 +9,7 @@ export function useContent() {
     axios
       .get(`${BACKEND_URL}/api/v1/content`, {
         headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
+          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
         },
       })
       .then((response) => {
@@ -19,13 +19,6 @@ export function useContent() {
 
   useEffect(() => {
     refresh();
-    let interval = setInterval(() => {
-      refresh();
-    }, 10 * 1000);
-
-    return () => {
-      clearInterval(interval);
-    };
   }, []);
 
   return { contents, refresh };

@@ -20,7 +20,7 @@ export function Dashboard() {
   return (
     <div>
       <Sidebar />
-      <div className="p-4 ml-72 min-h-screen bg-gray-100 border-2">
+      <div className="p-4 ml-52 min-h-screen bg-gray-100 border-2">
         <CreateContentModal
           open={modalOpen}
           onClose={() => {
@@ -39,13 +39,15 @@ export function Dashboard() {
           <Button
             onClick={async () => {
               const response = await axios.post(
-                `${BACKEND_URL}/api/v1/brain/share`,
+                `${BACKEND_URL}/api/v1/content/share-brain`,
                 {
                   share: true,
                 },
                 {
                   headers: {
-                    Authorization: `Bearer ${localStorage.getItem("token")}`,
+                    Authorization: `Bearer ${localStorage.getItem(
+                      "access_token"
+                    )}`,
                   },
                 }
               );
@@ -58,9 +60,17 @@ export function Dashboard() {
           ></Button>
         </div>
 
-        <div className="flex gap-4 flex-wrap">
-          {contents.map(({ type, link, title }) => (
-            <Card type={type} link={link} title={title} />
+        <div className="columns-1 sm:columns-2 gap-4 mt-10">
+          {contents?.map(({ type, link, title, createdAt }, index: number) => (
+            <div key={index} className="mb-4 break-inside-avoid">
+              <Card
+                key={index}
+                type={type}
+                link={link}
+                title={title}
+                createdAt={createdAt}
+              />
+            </div>
           ))}
         </div>
       </div>
