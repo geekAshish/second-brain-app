@@ -20,7 +20,7 @@ contentRouter.route("/").put(updateContent);
 
 contentRouter.route("/").delete(deleteContent);
 
-contentRouter.route("/share").post(shareAllContents);
+contentRouter.route("/share-brain").post(shareAllContents);
 
 contentRouter.route("/share-content").post(shareContent);
 
