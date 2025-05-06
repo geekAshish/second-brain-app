@@ -5,7 +5,10 @@ import { User } from "../models/user";
 import { errors } from "../error";
 
 const registerShema = zod.object({
-  username: zod.string(),
+  username: zod.string({
+    required_error: "User Name is required",
+    invalid_type_error: "User Name must be a string",
+  }),
   email: zod.string(),
   password: zod.any(),
 });
