@@ -1,24 +1,38 @@
-import { useRef, useState } from "react";
+import { useRef } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
 import { Button } from "./Button";
 import { Input } from "./Input";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
 
-enum ContentType {
-  Youtube = "youtube",
-  Twitter = "twitter",
+interface PropType {
+  open: boolean;
+  onClose: () => void;
 }
 
+const getTypeFromLink = (link: string) => {
+  let type = "";
+  if (link?.includes("youtu.be") || link?.includes("youtube.com")) {
+    type = "youtube";
+  }
+  if (link?.includes("x.com") || link?.includes("twitter.com")) {
+    type = "twitter";
+  }
+
+  return type;
+};
+
 // controlled component
-export function CreateContentModal({ open, onClose }) {
+export function CreateContentModal({ open, onClose }: PropType) {
   const titleRef = useRef<HTMLInputElement>();
   const linkRef = useRef<HTMLInputElement>();
-  const [type, setType] = useState(ContentType.Youtube);
+  const descriptionRef = useRef<HTMLInputElement>();
 
   async function addContent() {
     const title = titleRef.current?.value;
     const link = linkRef.current?.value;
+    const description = descriptionRef.current?.value;
+    const type = getTypeFromLink(link || "");
 
     await axios.post(
       `${BACKEND_URL}/api/v1/content`,
@@ -26,6 +40,7 @@ export function CreateContentModal({ open, onClose }) {
         link,
         title,
         type,
+        description,
       },
       {
         headers: {
@@ -41,10 +56,21 @@ export function CreateContentModal({ open, onClose }) {
     <div>
       {open && (
         <div>
-          <div className="w-screen h-screen bg-slate-500 fixed top-0 left-0 opacity-60 flex justify-center"></div>
-          <div className="w-screen h-screen fixed top-0 left-0 flex justify-center">
-            <div className="flex flex-col justify-center">
-              <span className="bg-white opacity-100 p-4 rounded fixed">
+          <div className="fixed inset-0 bg-slate-500 opacity-60 z-40"></div>
+          <div
+            className="fixed inset-0 flex items-center justify-center z-50"
+            onClick={(e) => {
+              e.stopPropagation();
+              onClose();
+            }}
+          >
+            <div
+              className="flex flex-col justify-center"
+              onClick={(e) => {
+                e.stopPropagation();
+              }}
+            >
+              <div className="bg-white p-2 rounded-lg shadow-lg">
                 <div className="flex justify-end">
                   <div onClick={onClose} className="cursor-pointer">
                     <CrossIcon />
@@ -52,31 +78,13 @@ export function CreateContentModal({ open, onClose }) {
                 </div>
                 <div>
                   <Input reference={titleRef} placeholder={"Title"} />
+                  <Input
+                    reference={descriptionRef}
+                    placeholder={"Description"}
+                  />
                   <Input reference={linkRef} placeholder={"Link"} />
                 </div>
-                <div>
-                  <h1>Type</h1>
-                  <div className="flex gap-1 justify-center pb-2">
-                    <Button
-                      text="Youtube"
-                      variant={
-                        type === ContentType.Youtube ? "primary" : "secondary"
-                      }
-                      onClick={() => {
-                        setType(ContentType.Youtube);
-                      }}
-                    ></Button>
-                    <Button
-                      text="Twitter"
-                      variant={
-                        type === ContentType.Twitter ? "primary" : "secondary"
-                      }
-                      onClick={() => {
-                        setType(ContentType.Twitter);
-                      }}
-                    ></Button>
-                  </div>
-                </div>
+
                 <div className="flex justify-center">
                   <Button
                     onClick={addContent}
@@ -84,7 +92,7 @@ export function CreateContentModal({ open, onClose }) {
                     text="Submit"
                   />
                 </div>
-              </span>
+              </div>
             </div>
           </div>
         </div>

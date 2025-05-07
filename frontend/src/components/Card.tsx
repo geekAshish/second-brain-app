@@ -7,6 +7,7 @@ interface CardProps {
   title: string;
   link: string;
   // type: "twitter" | "youtube";
+  description: string;
   type: any;
   createdAt?: Date;
 }
@@ -26,7 +27,7 @@ const getYoutubeLink = (link: string) => {
   return finalLink;
 };
 
-export function Card({ title, link, type, createdAt }: CardProps) {
+export function Card({ title, link, type, description, createdAt }: CardProps) {
   const date = createdAt ? new Date(createdAt) : new Date();
   const formattedDate = date.toLocaleString("en-GB", { timeZone: "UTC" });
   return (
@@ -73,6 +74,7 @@ export function Card({ title, link, type, createdAt }: CardProps) {
         </div>
         <div>
           <p className="text-[10px] mt-5">{formattedDate}</p>
+          <p className="text-[10px] mt-5">{description}</p>
         </div>
       </div>
     </div>
