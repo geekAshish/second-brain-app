@@ -19,7 +19,7 @@ export const getAllContents = async (req: Request, res: Response) => {
 };
 
 export const addContent = async (req: Request, res: Response) => {
-  const { type, title, link, tags } = req.body;
+  const { type, title, link, tags, description } = req.body;
   const userId = (req as any).user?.userId;
 
   if (!userId) {
@@ -32,6 +32,7 @@ export const addContent = async (req: Request, res: Response) => {
     title,
     link,
     tags,
+    description,
     userId,
   });
 

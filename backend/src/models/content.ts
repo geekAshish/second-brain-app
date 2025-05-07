@@ -16,6 +16,11 @@ const contentSchema = new Schema(
       minlength: 3,
       maxlength: 200,
     },
+    description: {
+      type: String,
+      minlength: 3,
+      maxlength: 500,
+    },
     tags: [{ type: Types.ObjectId, ref: "Tag" }],
     userId: {
       type: Types.ObjectId,
