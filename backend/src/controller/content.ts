@@ -5,6 +5,7 @@ import { link } from "../models/link";
 import { ShareContent } from "../models/shareContent";
 import { User } from "../models/user";
 import { random } from "../utils";
+import { errors } from "../error";
 
 export const getAllContents = async (req: Request, res: Response) => {
   const id = (req as any).user?.userId;
@@ -42,10 +43,42 @@ export const addContent = async (req: Request, res: Response) => {
   });
 };
 
-export const updateContent = (req: Request, res: Response) => {};
+export const updateContent = async (req: Request, res: Response) => {
+  const { id, title, link, tags, description } = req.body;
+  const userId = (req as any).user?.userId;
 
-export const deleteContent = (req: Request, res: Response) => {
-  res.send("delete content");
+  if (title === "" || link === "") {
+    throw new errors.BadRequest(`title or link can't be empty`);
+  }
+
+  const filter = { _id: id, userId: userId };
+  const update = { title, link, tags, description };
+
+  await content.findOneAndUpdate(filter, update);
+
+  res.status(StatusCodes.OK).json({
+    msg: "brain updated successfully...",
+  });
+};
+
+export const deleteContent = async (req: Request, res: Response) => {
+  const { id } = req.body;
+  const userId = (req as any).user?.userId;
+
+  if (!id) {
+    throw new errors.BadRequest("Brain not available");
+  }
+
+  const brain = await content.findOneAndDelete({
+    _id: id,
+    userId,
+  });
+
+  if (!brain) {
+    throw new errors.NotFound(`No Brain found`);
+  }
+
+  res.status(StatusCodes.OK).json({});
 };
 
 export const shareAllContents = async (req: Request, res: Response) => {
