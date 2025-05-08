@@ -34,12 +34,13 @@ export function ShareBrain() {
           <div className="columns-1 sm:columns-2 gap-4 mt-10">
             {contents?.map(
               (
-                { type, link, title, description, createdAt },
+                { type, link, title, description, _id, createdAt },
                 index: number
               ) => (
                 <div key={index} className="mb-4 break-inside-avoid">
                   <Card
                     key={index}
+                    contentId={_id}
                     type={type}
                     link={link}
                     title={title}
@@ -49,6 +50,27 @@ export function ShareBrain() {
                 </div>
               )
             )}
+          </div>
+        </div>
+      </div>
+    );
+  }
+  if (type === "content") {
+    return (
+      <div>
+        <Sidebar />
+        <div className="p-4 ml-52 min-h-screen bg-gray-100 border-2">
+          <div className="columns-1 sm:columns-2 gap-4 mt-10">
+            <div className="mb-4 break-inside-avoid">
+              <Card
+                contentId={contents?.contentId?._id}
+                type={contents?.contentId?.type}
+                link={contents?.contentId?.link}
+                title={contents?.contentId?.title}
+                description={contents?.contentId?.description}
+                createdAt={contents?.contentId?.createdAt}
+              />
+            </div>
           </div>
         </div>
       </div>

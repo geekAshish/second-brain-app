@@ -2,15 +2,44 @@ import { Edit } from "lucide-react";
 import { ShareIcon } from "../icons/ShareIcon";
 import { TwitterIcon } from "../icons/TwitterIcon";
 import { YoutubeIcon } from "../icons/YoutubeIcon";
+import { BACKEND_URL } from "../config";
+
+import axios from "axios";
+import { useState } from "react";
+import { Modal } from "./ui/Modal";
 
 interface CardProps {
   title: string;
   link: string;
   // type: "twitter" | "youtube";
   description: string;
-  type: any;
+  contentId?: string;
+  type: string;
   createdAt?: Date;
 }
+
+const shareBrainFetcher = async ({
+  contentId,
+}: {
+  contentId: string | undefined;
+}) => {
+  const response = await axios.post(
+    `${BACKEND_URL}/api/v1/content/share-content`,
+    {
+      share: true,
+      contentId,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+    }
+  );
+
+  const shareUrl = response.data.hash;
+
+  return shareUrl;
+};
 
 function getYouTubeVideoId(url: string) {
   const regex =
@@ -27,11 +56,37 @@ const getYoutubeLink = (link: string) => {
   return finalLink;
 };
 
-export function Card({ title, link, type, description, createdAt }: CardProps) {
+export function Card({
+  title,
+  contentId,
+  link,
+  type,
+  description,
+  createdAt,
+}: CardProps) {
+  const [urlHash, setUrlHash] = useState("");
+  const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
+
   const date = createdAt ? new Date(createdAt) : new Date();
   const formattedDate = date.toLocaleString("en-GB", { timeZone: "UTC" });
+
+  const handleShareBrain = async () => {
+    const hash = await shareBrainFetcher({ contentId });
+    setUrlHash(hash);
+  };
+
+  console.log(location.pathname);
+
   return (
     <div>
+      <Modal
+        open={openShareBrainModal}
+        onClose={() => setOpenShareBrainModal(false)}
+      >
+        <div>
+          <p>http://localhost:5173/share-brain/{urlHash}?type=content</p>
+        </div>
+      </Modal>
       <div className="p-4 bg-white rounded-md border-gray-200 max-w-72  border min-h-48 min-w-72">
         <div className="flex justify-between">
           <div className="flex items-center text-md">
@@ -43,13 +98,20 @@ export function Card({ title, link, type, description, createdAt }: CardProps) {
           </div>
           <div className="flex items-center">
             <div className="p-2 text-gray-500 cursor-pointer hover:bg-slate-200 rounded">
-              <a href={link} target="_blank">
+              <div
+                onClick={() => {
+                  handleShareBrain();
+                  setOpenShareBrainModal(true);
+                }}
+              >
                 <ShareIcon />
-              </a>
+              </div>
             </div>
-            <div className="p-2 text-gray-500 cursor-pointer hover:bg-slate-200 rounded">
-              <Edit size={17} />
-            </div>
+            {!location.pathname?.includes("share-brain") && (
+              <div className="p-2 text-gray-500 cursor-pointer hover:bg-slate-200 rounded">
+                <Edit size={17} />
+              </div>
+            )}
           </div>
         </div>
 

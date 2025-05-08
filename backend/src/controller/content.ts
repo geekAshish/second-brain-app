@@ -179,7 +179,7 @@ export const getShareContent = async (req: Request, res: Response) => {
   const linkDetail = await ShareContent.findOne({
     hash: shareLink,
   })
-    .populate({ path: "contentId", select: ["title", "link"] })
+    .populate({ path: "contentId" })
     .populate({ path: "userId", select: "username" });
 
   if (!linkDetail) {

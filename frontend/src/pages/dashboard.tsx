@@ -83,10 +83,14 @@ export function Dashboard() {
 
         <div className="columns-1 sm:columns-2 gap-4 mt-10">
           {contents?.map(
-            ({ type, link, title, description, createdAt }, index: number) => (
+            (
+              { type, link, title, description, _id, createdAt },
+              index: number
+            ) => (
               <div key={index} className="mb-4 break-inside-avoid">
                 <Card
                   key={index}
+                  contentId={_id}
                   type={type}
                   link={link}
                   title={title}

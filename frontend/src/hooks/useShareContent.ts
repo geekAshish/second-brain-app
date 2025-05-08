@@ -13,7 +13,6 @@ const getUrl = (
   if (type === "content") {
     url = `${BACKEND_URL}/api/v1/content/share-content/${brainId}`;
   }
-  console.log(url);
 
   return url;
 };
@@ -29,7 +28,6 @@ export function useShareContent({
   const [error, setError] = useState("");
 
   const url = getUrl(type, brainId);
-  console.log(url);
 
   function refresh() {
     axios
