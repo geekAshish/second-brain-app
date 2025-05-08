@@ -51,7 +51,7 @@ export function Dashboard() {
                   },
                 }
               );
-              const shareUrl = `http://localhost:5173/share/${response.data.hash}`;
+              const shareUrl = `http://localhost:5173/share-brain/${response.data.hash}`;
               alert(shareUrl);
             }}
             variant="secondary"
