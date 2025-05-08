@@ -8,10 +8,36 @@ import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
+import { Modal } from "../components/ui/Modal";
+
+const shareBrainFetcher = async () => {
+  const response = await axios.post(
+    `${BACKEND_URL}/api/v1/content/share-brain`,
+    {
+      share: true,
+    },
+    {
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+      },
+    }
+  );
+
+  const shareUrl = response.data.hash;
+
+  return shareUrl;
+};
 
 export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
+  const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
+  const [urlHash, setUrlHash] = useState("");
   const { contents, refresh } = useContent();
+
+  const handleShareBrain = async () => {
+    const hash = await shareBrainFetcher();
+    setUrlHash(hash);
+  };
 
   useEffect(() => {
     refresh();
@@ -27,6 +53,14 @@ export function Dashboard() {
             setModalOpen(false);
           }}
         />
+        <Modal
+          open={openShareBrainModal}
+          onClose={() => setOpenShareBrainModal(false)}
+        >
+          <div>
+            <p>http://localhost:5173/share-brain/{urlHash}?type=brain</p>
+          </div>
+        </Modal>
         <div className="flex justify-end gap-4">
           <Button
             onClick={() => {
@@ -38,21 +72,8 @@ export function Dashboard() {
           ></Button>
           <Button
             onClick={async () => {
-              const response = await axios.post(
-                `${BACKEND_URL}/api/v1/content/share-brain`,
-                {
-                  share: true,
-                },
-                {
-                  headers: {
-                    Authorization: `Bearer ${localStorage.getItem(
-                      "access_token"
-                    )}`,
-                  },
-                }
-              );
-              const shareUrl = `http://localhost:5173/share-brain/${response.data.hash}`;
-              alert(shareUrl);
+              handleShareBrain();
+              setOpenShareBrainModal(true);
             }}
             variant="secondary"
             text="Share brain"
