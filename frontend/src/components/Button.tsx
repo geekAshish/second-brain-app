@@ -14,7 +14,7 @@ const variantClasses = {
   secondary: "bg-purple-200 text-purple-600",
 };
 
-const defaultStyles = "px-4 py-1 rounded-md font-light flex items-center";
+const defaultStyles = "px-2 py-1 gap-2 rounded-md font-light flex items-center";
 
 export function Button({
   variant,
@@ -31,14 +31,14 @@ export function Button({
         variantClasses[variant] +
         " " +
         defaultStyles +
-        `${fullWidth ? " w-full flex justify-center items-center" : ""} ${
+        `${fullWidth ? " flex items-center justify-between" : ""} ${
           loading ? "opacity-45	" : ""
         }`
       }
       disabled={loading}
     >
-      {startIcon && <div className="pr-2">{startIcon}</div>}
-      {text}
+      {startIcon && <div className="">{startIcon}</div>}
+      <p>{text}</p>
     </button>
   );
 }

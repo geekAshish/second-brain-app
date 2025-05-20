@@ -1,7 +1,4 @@
-import { Edit } from "lucide-react";
-import { ShareIcon } from "../icons/ShareIcon";
-import { TwitterIcon } from "../icons/TwitterIcon";
-import { YoutubeIcon } from "../icons/YoutubeIcon";
+import { Edit, Share, Twitter, Youtube } from "lucide-react";
 import { BACKEND_URL } from "../config";
 
 import axios from "axios";
@@ -91,8 +88,8 @@ export function Card({
         <div className="flex justify-between">
           <div className="flex items-center text-md">
             <div className="text-gray-500 pr-2">
-              {type === "youtube" && <YoutubeIcon />}
-              {type === "twitter" && <TwitterIcon />}
+              {type === "youtube" && <Youtube />}
+              {type === "twitter" && <Twitter />}
             </div>
             {title}
           </div>
@@ -104,7 +101,7 @@ export function Card({
                   setOpenShareBrainModal(true);
                 }}
               >
-                <ShareIcon />
+                <Share />
               </div>
             </div>
             {!location.pathname?.includes("share-brain") && (

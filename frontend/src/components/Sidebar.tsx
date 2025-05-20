@@ -1,20 +1,19 @@
+import { Twitter, Youtube } from "lucide-react";
 import { Logo } from "../icons/Logo";
-import { TwitterIcon } from "../icons/TwitterIcon";
-import { YoutubeIcon } from "../icons/YoutubeIcon";
 import { SidebarItem } from "./SidebarItem";
 
 export function Sidebar() {
   return (
-    <div className="h-screen bg-white border-r w-52 fixed left-0 top-0 pl-6">
-      <div className="flex text-2xl pt-8 items-center">
-        <div className="pr-2 text-purple-600">
+    <div className="h-screen p-2 bg-white border-r w-52 fixed left-0 top-0 ">
+      <div className="flex text-2xl gap-2 items-center">
+        <div className="text-purple-600">
           <Logo />
         </div>
-        Brainly
+        <p>Brainly</p>
       </div>
-      <div className="pt-8 pl-4">
-        <SidebarItem text="Twitter" icon={<TwitterIcon />} />
-        <SidebarItem text="Youtube" icon={<YoutubeIcon />} />
+      <div className="mt-3">
+        <SidebarItem text="Twitter" icon={<Twitter />} />
+        <SidebarItem text="Youtube" icon={<Youtube />} />
       </div>
     </div>
   );

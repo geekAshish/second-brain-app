@@ -2,13 +2,12 @@ import { useEffect, useState } from "react";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { CreateContentModal } from "../components/CreateContentModal";
-import { PlusIcon } from "../icons/PlusIcon";
-import { ShareIcon } from "../icons/ShareIcon";
 import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
 import { Modal } from "../components/ui/Modal";
+import { Plus, Share } from "lucide-react";
 
 const shareBrainFetcher = async () => {
   const response = await axios.post(
@@ -68,7 +67,7 @@ export function Dashboard() {
             }}
             variant="primary"
             text="Add content"
-            startIcon={<PlusIcon />}
+            startIcon={<Plus />}
           ></Button>
           <Button
             onClick={async () => {
@@ -77,7 +76,7 @@ export function Dashboard() {
             }}
             variant="secondary"
             text="Share brain"
-            startIcon={<ShareIcon />}
+            startIcon={<Share />}
           ></Button>
         </div>
 
