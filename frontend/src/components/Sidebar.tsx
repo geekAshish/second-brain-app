@@ -1,6 +1,4 @@
-import { Twitter, Youtube } from "lucide-react";
 import { Logo } from "../icons/Logo";
-import { SidebarItem } from "./SidebarItem";
 
 export function Sidebar() {
   return (
@@ -12,8 +10,9 @@ export function Sidebar() {
         <p>Brainly</p>
       </div>
       <div className="mt-3">
-        <SidebarItem text="Twitter" icon={<Twitter />} />
-        <SidebarItem text="Youtube" icon={<Youtube />} />
+        <p>label filter will go there</p>
+        {/* <SidebarItem text="Twitter" icon={<Twitter />} />
+        <SidebarItem text="Youtube" icon={<Youtube />} /> */}
       </div>
     </div>
   );
