@@ -4,6 +4,8 @@ import { BACKEND_URL } from "../config";
 import axios from "axios";
 import { useState } from "react";
 import { Modal } from "./ui/Modal";
+import { CreateContentModal } from "./CreateContentModal";
+import { UpdateContentModal } from "./updateContentModal";
 
 interface CardProps {
   title: string;
@@ -13,6 +15,7 @@ interface CardProps {
   contentId?: string;
   type: string;
   createdAt?: Date;
+  refresh: () => void;
 }
 
 const shareBrainFetcher = async ({
@@ -60,8 +63,10 @@ export function Card({
   type,
   description,
   createdAt,
+  refresh,
 }: CardProps) {
   const [urlHash, setUrlHash] = useState("");
+  const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
 
   const date = createdAt ? new Date(createdAt) : new Date();
@@ -72,10 +77,20 @@ export function Card({
     setUrlHash(hash);
   };
 
-  console.log(location.pathname);
-
   return (
     <div>
+      <UpdateContentModal
+        open={modalOpen}
+        onClose={() => {
+          setModalOpen(false);
+        }}
+        title={title}
+        contentId={contentId}
+        link={link}
+        description={description}
+        refresh={refresh}
+      />
+
       <Modal
         open={openShareBrainModal}
         onClose={() => setOpenShareBrainModal(false)}
@@ -84,6 +99,7 @@ export function Card({
           <p>http://localhost:5173/share-brain/{urlHash}?type=content</p>
         </div>
       </Modal>
+
       <div className="p-4 bg-white rounded-md border-gray-200 max-w-72  border min-h-48 min-w-72">
         <div className="flex justify-between">
           <div className="flex items-center text-md">
@@ -106,7 +122,7 @@ export function Card({
             </div>
             {!location.pathname?.includes("share-brain") && (
               <div className="p-2 text-gray-500 cursor-pointer hover:bg-slate-200 rounded">
-                <Edit size={17} />
+                <Edit size={17} onClick={() => setModalOpen(true)} />
               </div>
             )}
           </div>

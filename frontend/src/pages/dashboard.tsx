@@ -95,6 +95,7 @@ export function Dashboard() {
                   title={title}
                   description={description}
                   createdAt={createdAt}
+                  refresh={refresh}
                 />
               </div>
             )

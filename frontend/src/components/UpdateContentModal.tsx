@@ -8,6 +8,7 @@ import axios from "axios";
 interface PropType {
   open: boolean;
   onClose: () => void;
+  refresh: () => void;
   title?: string;
   contentId?: string;
   link?: string;
@@ -27,13 +28,14 @@ const getTypeFromLink = (link: string) => {
 };
 
 // controlled component
-export function CreateContentModal({
+export function UpdateContentModal({
   open,
   onClose,
   title,
   link,
   contentId,
   description,
+  refresh,
 }: PropType) {
   const [contentObj, setContentObj] = useState({
     contentId,
@@ -45,12 +47,13 @@ export function CreateContentModal({
   async function addContent() {
     const type = getTypeFromLink(link || "");
 
-    await axios.post(
+    await axios.put(
       `${BACKEND_URL}/api/v1/content`,
       {
         link: contentObj?.link,
         title: contentObj?.title,
         type: type,
+        id: contentObj?.contentId,
         description: contentObj?.description,
       },
       {
@@ -60,6 +63,7 @@ export function CreateContentModal({
       }
     );
 
+    refresh();
     onClose();
   }
 
