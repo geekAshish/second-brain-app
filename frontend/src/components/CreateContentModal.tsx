@@ -43,7 +43,7 @@ export function CreateContentModal({
   });
 
   async function addContent() {
-    const type = getTypeFromLink(link || "");
+    const type = getTypeFromLink(contentObj?.link || "");
 
     await axios.post(
       `${BACKEND_URL}/api/v1/content`,
