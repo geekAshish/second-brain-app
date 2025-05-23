@@ -1,16 +1,18 @@
-import { ChangeEvent, LegacyRef } from "react";
+import { ChangeEvent, KeyboardEvent, RefObject } from "react";
 
 interface InputProps {
-  label: string;
+  label?: string;
   placeholder?: string;
   value?: string;
   onChange?: (name: string, value: string) => void;
-  reference?: LegacyRef<HTMLInputElement>;
+  onEnter?: (name: string, value: string) => void;
+  reference?: RefObject<HTMLInputElement>;
 }
 
 export function Input({
   value,
   onChange,
+  onEnter,
   placeholder,
   label,
   reference,
@@ -20,11 +22,21 @@ export function Input({
     onChange?.(name, value);
   };
 
+  const enterHandler = (e: KeyboardEvent<HTMLInputElement>) => {
+    const { name, value } = e.currentTarget;
+    if (e.key === "Enter") {
+      onEnter?.(name, value);
+    }
+  };
+
   return (
     <div>
       <input
         value={value}
         onChange={(e) => changeHandler(e)}
+        onKeyDown={(e) => {
+          enterHandler(e);
+        }}
         ref={reference}
         placeholder={placeholder}
         name={label}

@@ -7,9 +7,9 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
 export function Signup() {
-  const emailRef = useRef<HTMLInputElement>();
-  const usernameRef = useRef<HTMLInputElement>();
-  const passwordRef = useRef<HTMLInputElement>();
+  const emailRef = useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
   const navigate = useNavigate();
 
   const onSuccessNotify = () => toast("You have signed up!");

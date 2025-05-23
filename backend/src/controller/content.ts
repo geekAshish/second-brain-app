@@ -12,7 +12,8 @@ export const getAllContents = async (req: Request, res: Response) => {
 
   const contentDetail = await content
     .find({ userId: id })
-    .populate("userId", "username");
+    .populate("userId", "username")
+    .sort({ createdAt: 1 });
 
   res.status(StatusCodes.OK).json({
     msg: contentDetail,

@@ -1,7 +1,7 @@
 import { model, Schema, Types } from "mongoose";
 
-const labelSchema = new Schema({
-  label: {
+const tagSchema = new Schema({
+  tag: {
     type: String,
     required: true,
     unique: true,
@@ -9,7 +9,6 @@ const labelSchema = new Schema({
   count: {
     type: Number,
     required: true,
-    unique: true,
   },
   users: [
     {
@@ -20,4 +19,4 @@ const labelSchema = new Schema({
   ],
 });
 
-export const Label = model("label", labelSchema);
+export const Tag = model("tag", tagSchema);

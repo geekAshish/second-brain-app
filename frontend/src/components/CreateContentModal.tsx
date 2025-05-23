@@ -12,6 +12,7 @@ interface PropType {
   contentId?: string;
   link?: string;
   description?: string;
+  tag?: string;
 }
 
 const getTypeFromLink = (link: string) => {
@@ -34,13 +35,16 @@ export function CreateContentModal({
   link,
   contentId,
   description,
+  tag,
 }: PropType) {
   const [contentObj, setContentObj] = useState({
     contentId,
     title,
     link,
     description,
+    tag,
   });
+  const [tags, setTags] = useState<string[]>([]);
 
   async function addContent() {
     const type = getTypeFromLink(contentObj?.link || "");
@@ -52,6 +56,7 @@ export function CreateContentModal({
         title: contentObj?.title,
         type: type,
         description: contentObj?.description,
+        tag: tags,
       },
       {
         headers: {
@@ -62,6 +67,10 @@ export function CreateContentModal({
 
     onClose();
   }
+
+  const addTagHandler = (name: string, value: string) => {
+    setTags((prev) => [...prev, value]);
+  };
 
   const changeHandler = (name: string, value: string) => {
     setContentObj((prev) => {
@@ -105,6 +114,13 @@ export function CreateContentModal({
                     onChange={changeHandler}
                     placeholder={"Description"}
                     label={"description"}
+                  />
+                  <Input
+                    value={contentObj?.tag}
+                    onChange={changeHandler}
+                    placeholder={"Tag"}
+                    label={"tag"}
+                    onEnter={addTagHandler}
                   />
                   <Input
                     value={contentObj?.link}
