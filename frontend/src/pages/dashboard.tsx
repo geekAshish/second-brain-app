@@ -8,6 +8,7 @@ import { BACKEND_URL } from "../config";
 import axios from "axios";
 import { Modal } from "../components/ui/Modal";
 import { Plus, Share } from "lucide-react";
+import { useTags } from "../hooks/useTags";
 
 const shareBrainFetcher = async () => {
   const response = await axios.post(
@@ -32,6 +33,7 @@ export function Dashboard() {
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
   const [urlHash, setUrlHash] = useState("");
   const { contents, refresh } = useContent();
+  const { tags, refresh: refreshTags } = useTags();
 
   const handleShareBrain = async () => {
     const hash = await shareBrainFetcher();
@@ -44,7 +46,7 @@ export function Dashboard() {
 
   return (
     <div>
-      <Sidebar />
+      <Sidebar tags={tags} />
       <div className="p-4 ml-52 min-h-screen bg-gray-100 border-2">
         <CreateContentModal
           open={modalOpen}

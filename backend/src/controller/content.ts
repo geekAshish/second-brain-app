@@ -144,7 +144,7 @@ export const getAllTags = async (req: Request, res: Response) => {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       success: false,
       message: "Failed to fetch tags",
-      error: err.message,
+      error: err,
     });
   }
 };
