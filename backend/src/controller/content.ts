@@ -10,16 +10,43 @@ import { Tag } from "../models/tag";
 import { Types } from "mongoose";
 
 export const getAllContents = async (req: Request, res: Response) => {
-  const id = (req as any).user?.userId;
+  try {
+    const userId = (req as any).user?.userId;
+    const tag = req.query.tag as string | undefined;
 
-  const contentDetail = await content
-    .find({ userId: id })
-    .populate("userId", "username")
-    .sort({ createdAt: 1 });
+    if (!userId) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        success: false,
+        message: "Unauthorized: User ID missing",
+      });
+      return;
+    }
 
-  res.status(StatusCodes.OK).json({
-    msg: contentDetail,
-  });
+    // Base query: filter by userId
+    const query: any = { userId };
+
+    // If tag is provided, filter by it
+    if (tag) {
+      query.tags = { $in: [tag] }; // Match if tag is in the tags array
+    }
+
+    const contents = await content
+      .find(query)
+      .populate("userId", "username")
+      .populate("tags", "tag")
+      .sort({ createdAt: -1 });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: contents,
+    });
+  } catch (error: any) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Failed to fetch contents",
+      error: error.message,
+    });
+  }
 };
 
 export const addContent = async (req: Request, res: Response) => {

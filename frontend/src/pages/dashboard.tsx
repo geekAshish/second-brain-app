@@ -32,7 +32,8 @@ export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
   const [urlHash, setUrlHash] = useState("");
-  const { contents, refresh } = useContent();
+  const [selectedTagId, setSelectedTagId] = useState<string>("");
+  const { contents, refresh } = useContent({ tag: selectedTagId });
   const { tags, refresh: refreshTags } = useTags();
 
   const handleShareBrain = async () => {
@@ -40,9 +41,17 @@ export function Dashboard() {
     setUrlHash(hash);
   };
 
+  const selectTagHandler = ({ tagId }: { tagId: string }) => {
+    setSelectedTagId(tagId);
+  };
+
   return (
     <div>
-      <Sidebar tags={tags} />
+      <Sidebar
+        tags={tags}
+        selectedTagId={selectedTagId}
+        selectTagHandler={selectTagHandler}
+      />
       <div className="p-4 ml-52 min-h-screen bg-gray-100 border-2">
         <CreateContentModal
           open={modalOpen}
