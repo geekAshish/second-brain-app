@@ -9,6 +9,7 @@ interface PropType {
   open: boolean;
   onClose: () => void;
   refresh: () => void;
+  refreshTags: () => void;
   title?: string;
   contentId?: string;
   link?: string;
@@ -36,6 +37,7 @@ export function UpdateContentModal({
   contentId,
   description,
   refresh,
+  refreshTags,
 }: PropType) {
   const [contentObj, setContentObj] = useState({
     contentId,
@@ -64,7 +66,11 @@ export function UpdateContentModal({
     );
 
     refresh();
-    onClose();
+    refreshTags();
+
+    setTimeout(() => {
+      onClose();
+    }, 300);
   }
 
   const changeHandler = (name: string, value: string) => {

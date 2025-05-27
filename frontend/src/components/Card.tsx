@@ -4,8 +4,7 @@ import { BACKEND_URL } from "../config";
 import axios from "axios";
 import { useState } from "react";
 import { Modal } from "./ui/Modal";
-import { CreateContentModal } from "./CreateContentModal";
-import { UpdateContentModal } from "./updateContentModal";
+import { UpdateContentModal } from "./UpdateContentModal";
 
 interface CardProps {
   title: string;
@@ -16,6 +15,7 @@ interface CardProps {
   type: string;
   createdAt?: Date;
   refresh: () => void;
+  refreshTags: () => void;
 }
 
 const shareBrainFetcher = async ({
@@ -64,6 +64,7 @@ export function Card({
   description,
   createdAt,
   refresh,
+  refreshTags,
 }: CardProps) {
   const [urlHash, setUrlHash] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -89,6 +90,7 @@ export function Card({
         link={link}
         description={description}
         refresh={refresh}
+        refreshTags={refreshTags}
       />
 
       <Modal

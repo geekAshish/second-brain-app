@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "../components/Button";
 import { Card } from "../components/Card";
 import { CreateContentModal } from "../components/CreateContentModal";
@@ -40,10 +40,6 @@ export function Dashboard() {
     setUrlHash(hash);
   };
 
-  useEffect(() => {
-    refresh();
-  }, [modalOpen]);
-
   return (
     <div>
       <Sidebar tags={tags} />
@@ -53,6 +49,8 @@ export function Dashboard() {
           onClose={() => {
             setModalOpen(false);
           }}
+          refresh={refresh}
+          refreshTags={refreshTags}
         />
         <Modal
           open={openShareBrainModal}
@@ -98,6 +96,7 @@ export function Dashboard() {
                   description={description}
                   createdAt={createdAt}
                   refresh={refresh}
+                  refreshTags={refreshTags}
                 />
               </div>
             )

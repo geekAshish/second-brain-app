@@ -13,6 +13,8 @@ interface PropType {
   link?: string;
   description?: string;
   tag?: string;
+  refresh: () => void;
+  refreshTags: () => void;
 }
 
 const getTypeFromLink = (link: string) => {
@@ -36,6 +38,8 @@ export function CreateContentModal({
   contentId,
   description,
   tag,
+  refresh,
+  refreshTags,
 }: PropType) {
   const [contentObj, setContentObj] = useState({
     contentId,
@@ -65,6 +69,8 @@ export function CreateContentModal({
       }
     );
 
+    refresh();
+    refreshTags();
     onClose();
   }
 
