@@ -56,7 +56,7 @@ export function CreateContentModal({
         title: contentObj?.title,
         type: type,
         description: contentObj?.description,
-        tag: tags,
+        tags: tags,
       },
       {
         headers: {

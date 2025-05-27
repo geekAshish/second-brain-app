@@ -6,6 +6,8 @@ import { ShareContent } from "../models/shareContent";
 import { User } from "../models/user";
 import { random } from "../utils";
 import { errors } from "../error";
+import { Tag } from "../models/tag";
+import { Types } from "mongoose";
 
 export const getAllContents = async (req: Request, res: Response) => {
   const id = (req as any).user?.userId;
@@ -22,6 +24,7 @@ export const getAllContents = async (req: Request, res: Response) => {
 
 export const addContent = async (req: Request, res: Response) => {
   const { type, title, link, tags, description } = req.body;
+
   const userId = (req as any).user?.userId;
 
   if (!userId) {
@@ -29,18 +32,42 @@ export const addContent = async (req: Request, res: Response) => {
     return;
   }
 
-  const c = await content.create({
+  if (!Array.isArray(tags) || tags.some((t) => typeof t !== "string")) {
+    res.status(StatusCodes.BAD_REQUEST).json({ msg: "Invalid tags format" });
+  }
+
+  const tagObjectIds: Types.ObjectId[] = [];
+
+  for (const tagName of tags) {
+    // Try to find existing tag
+    let tag = await Tag.findOne({ tag: tagName });
+
+    if (tag) {
+      tag.count += 1;
+      await tag.save();
+    } else {
+      tag = await Tag.create({
+        tag: tagName,
+        count: 1,
+        users: userId,
+      });
+    }
+
+    tagObjectIds.push(tag._id);
+  }
+
+  const newContent = await content.create({
     type,
     title,
     link,
-    tags,
+    tags: tagObjectIds,
     description,
     userId,
   });
 
   res.status(StatusCodes.CREATED).json({
     msg: "success",
-    data: c,
+    data: newContent,
   });
 };
 
@@ -70,16 +97,27 @@ export const deleteContent = async (req: Request, res: Response) => {
     throw new errors.BadRequest("Brain not available");
   }
 
-  const brain = await content.findOneAndDelete({
-    _id: id,
-    userId,
-  });
+  const existingContent = await content.findOne({ _id: id, userId });
 
-  if (!brain) {
+  if (!existingContent) {
     throw new errors.NotFound(`No Brain found`);
   }
 
-  res.status(StatusCodes.OK).json({});
+  const associatedTagIds = existingContent.tags;
+
+  await content.findOneAndDelete({ _id: id, userId });
+
+  for (const tagId of associatedTagIds) {
+    const usageCount = await content.countDocuments({ tags: tagId });
+
+    if (usageCount === 0) {
+      await Tag.findByIdAndDelete(tagId);
+    } else {
+      await Tag.findByIdAndUpdate(tagId, { $inc: { count: -1 } });
+    }
+  }
+
+  res.status(StatusCodes.OK).json({ msg: "Content deleted" });
 };
 
 export const shareAllContents = async (req: Request, res: Response) => {

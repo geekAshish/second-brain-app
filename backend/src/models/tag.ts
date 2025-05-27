@@ -10,13 +10,11 @@ const tagSchema = new Schema({
     type: Number,
     required: true,
   },
-  users: [
-    {
-      type: Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-  ],
+  users: {
+    type: Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
 });
 
 export const Tag = model("tag", tagSchema);

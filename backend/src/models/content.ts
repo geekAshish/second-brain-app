@@ -21,7 +21,8 @@ const contentSchema = new Schema(
       minlength: 3,
       maxlength: 500,
     },
-    tags: [{ type: Types.ObjectId, ref: "Tag" }],
+    // tags: [{ type: Types.ObjectId, ref: "Tag" }],
+    tags: [{ type: String }],
     userId: {
       type: Types.ObjectId,
       ref: "User",
