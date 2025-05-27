@@ -3,6 +3,7 @@ import {
   addContent,
   deleteContent,
   getAllContents,
+  getAllTags,
   getShareContent,
   getShareLink,
   shareAllContents,
@@ -15,6 +16,8 @@ const contentRouter = Router();
 contentRouter.route("/").post(addContent);
 
 contentRouter.route("/").get(getAllContents);
+
+contentRouter.route("/tags").get(getAllTags);
 
 contentRouter.route("/").put(updateContent);
 

@@ -120,6 +120,35 @@ export const deleteContent = async (req: Request, res: Response) => {
   res.status(StatusCodes.OK).json({ msg: "Content deleted" });
 };
 
+export const getAllTags = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.userId;
+
+    if (!userId) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        success: false,
+        message: "Unauthorized: User ID missing",
+      });
+      return;
+    }
+
+    const tags = await Tag.find({ users: userId }, { tag: 1, count: 1 }).sort({
+      count: -1,
+    });
+
+    res.status(StatusCodes.OK).json({
+      success: true,
+      data: tags,
+    });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Failed to fetch tags",
+      error: err.message,
+    });
+  }
+};
+
 export const shareAllContents = async (req: Request, res: Response) => {
   const { share } = req.body;
 
