@@ -75,7 +75,13 @@ export function CreateContentModal({
   }
 
   const addTagHandler = (name: string, value: string) => {
-    setTags((prev) => [...prev, value]);
+    setContentObj((prev) => {
+      return { ...prev, [name]: "" };
+    });
+
+    if (value) {
+      setTags((prev) => [...prev, value]);
+    }
   };
 
   const changeHandler = (name: string, value: string) => {
@@ -114,12 +120,14 @@ export function CreateContentModal({
                     onChange={changeHandler}
                     placeholder={"Title"}
                     label={"title"}
+                    className="mb-2"
                   />
                   <Input
                     value={contentObj?.description}
                     onChange={changeHandler}
                     placeholder={"Description"}
                     label={"description"}
+                    className="mb-2"
                   />
                   <Input
                     value={contentObj?.tag}
@@ -128,11 +136,22 @@ export function CreateContentModal({
                     label={"tag"}
                     onEnter={addTagHandler}
                   />
+                  <div className="mb-2">
+                    {tags?.map((t: string) => {
+                      return (
+                        <span className="text-[10px] bg-slate-300 p-1 rounded-full mr-2">
+                          {t}
+                        </span>
+                      );
+                    })}
+                  </div>
+
                   <Input
                     value={contentObj?.link}
                     onChange={changeHandler}
                     placeholder={"Link"}
                     label={"link"}
+                    className="mb-2"
                   />
                 </div>
 

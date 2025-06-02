@@ -3,6 +3,7 @@ import { ChangeEvent, KeyboardEvent, RefObject } from "react";
 interface InputProps {
   label?: string;
   placeholder?: string;
+  className?: string;
   value?: string;
   onChange?: (name: string, value: string) => void;
   onEnter?: (name: string, value: string) => void;
@@ -16,6 +17,7 @@ export function Input({
   placeholder,
   label,
   reference,
+  className,
 }: InputProps) {
   const changeHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -41,7 +43,7 @@ export function Input({
         placeholder={placeholder}
         name={label}
         type={"text"}
-        className="px-4 py-2 border rounded m-2"
+        className={`px-4 py-2 border rounded ${className}`}
       ></input>
     </div>
   );
