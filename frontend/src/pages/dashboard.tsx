@@ -4,37 +4,21 @@ import { Card } from "../components/Card";
 import { CreateContentModal } from "../components/CreateContentModal";
 import { Sidebar } from "../components/Sidebar";
 import { useContent } from "../hooks/useContent";
-import { BACKEND_URL } from "../config";
-import axios from "axios";
 import { Modal } from "../components/ui/Modal";
 import { Plus, Share } from "lucide-react";
 import { useTags } from "../hooks/useTags";
-
-const shareBrainFetcher = async () => {
-  const response = await axios.post(
-    `${BACKEND_URL}/api/v1/content/share-brain`,
-    {
-      share: true,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      },
-    }
-  );
-
-  const shareUrl = response.data.hash;
-
-  return shareUrl;
-};
+import { shareBrainFetcher } from "../module/services/api/fetcher/brain";
 
 export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
   const [urlHash, setUrlHash] = useState("");
   const [selectedTagId, setSelectedTagId] = useState<string>("");
+
   const { contents, refresh } = useContent({ tag: selectedTagId });
   const { tags, refresh: refreshTags } = useTags();
+
+  console.log(contents);
 
   const handleShareBrain = async () => {
     const hash = await shareBrainFetcher();
@@ -89,7 +73,7 @@ export function Dashboard() {
           ></Button>
         </div>
 
-        <div className="columns-1 sm:columns-2 gap-4 mt-10">
+        <div className="columns-1 sm:columns-3 gap-4 mt-10">
           {contents?.map(
             (
               { type, link, title, description, _id, createdAt },
