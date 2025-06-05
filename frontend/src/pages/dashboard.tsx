@@ -12,7 +12,7 @@ import { useTags } from "@/module/services/hooks/useTags";
 
 import { shareBrainFetcher } from "@/module/services/api/fetcher/brain";
 
-export function Dashboard() {
+export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
   const [urlHash, setUrlHash] = useState("");

@@ -7,7 +7,7 @@ import { BACKEND_URL } from "@/config";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 
-export function Signup() {
+export default function Signup() {
   const emailRef = useRef<HTMLInputElement>(null);
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
