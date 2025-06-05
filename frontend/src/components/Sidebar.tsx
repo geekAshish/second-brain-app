@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Logo } from "../icons/Logo";
+import { Logo } from "@/icons/Logo";
 
 interface tags {
   count: number;
@@ -12,9 +12,9 @@ export function Sidebar({
   selectedTagId,
   selectTagHandler,
 }: {
-  tags: tags[];
-  selectedTagId: string;
-  selectTagHandler: ({ tagId }: { tagId: string }) => void;
+  tags?: tags[];
+  selectedTagId?: string;
+  selectTagHandler?: ({ tagId }: { tagId: string }) => void;
 }) {
   const navigate = useNavigate();
   return (
@@ -30,7 +30,7 @@ export function Sidebar({
         </div>
         <p>Brainly</p>
       </div>
-      {tags?.length > 0 && (
+      {tags && tags?.length > 0 && (
         <div className="mt-3">
           <div className="flex justify-between px-3">
             <p>Top brain</p>
@@ -39,7 +39,7 @@ export function Sidebar({
               <button
                 className="hover:underline"
                 onClick={() => {
-                  selectTagHandler({ tagId: "" });
+                  selectTagHandler?.({ tagId: "" });
                 }}
               >
                 clear
@@ -52,7 +52,7 @@ export function Sidebar({
                 key={tag._id}
                 className="flex items-center gap-2 bg-gray-100 text-gray-800 px-3 py-1 rounded-full shadow-sm hover:shadow-md transition-all"
                 onClick={() => {
-                  selectTagHandler({ tagId: tag._id });
+                  selectTagHandler?.({ tagId: tag._id });
                 }}
               >
                 <span className="font-medium text-sm">{tag.tag}</span>

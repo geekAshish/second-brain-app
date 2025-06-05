@@ -1,13 +1,16 @@
 import { useState } from "react";
-import { Button } from "../components/Button";
-import { Card } from "../components/Card";
-import { CreateContentModal } from "../components/CreateContentModal";
-import { Sidebar } from "../components/Sidebar";
-import { useContent } from "../hooks/useContent";
-import { Modal } from "../components/ui/Modal";
 import { Plus, Share } from "lucide-react";
-import { useTags } from "../hooks/useTags";
-import { shareBrainFetcher } from "../module/services/api/fetcher/brain";
+
+import { Card } from "@/components/Card";
+import { Button } from "@/components/Button";
+import { Sidebar } from "@/components/Sidebar";
+import { Modal } from "@/components/ui/Modal";
+import { useContent } from "@/module/services/hooks/useContent";
+import { CreateContentModal } from "@/components/CreateContentModal";
+
+import { useTags } from "@/module/services/hooks/useTags";
+
+import { shareBrainFetcher } from "@/module/services/api/fetcher/brain";
 
 export function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);

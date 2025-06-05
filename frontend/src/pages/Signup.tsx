@@ -1,10 +1,11 @@
 import { useRef } from "react";
-import { Button } from "../components/Button";
-import { Input } from "../components/Input";
 import axios from "axios";
-import { BACKEND_URL } from "../config";
 import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+
+import { BACKEND_URL } from "@/config";
+import { Input } from "@/components/Input";
+import { Button } from "@/components/Button";
 
 export function Signup() {
   const emailRef = useRef<HTMLInputElement>(null);

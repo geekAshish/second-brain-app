@@ -1,8 +1,9 @@
+import { useState } from "react";
+import axios from "axios";
 import { Edit, Share, Twitter, Youtube } from "lucide-react";
+
 import { BACKEND_URL } from "../config";
 
-import axios from "axios";
-import { useState } from "react";
 import { Modal } from "./ui/Modal";
 import { UpdateContentModal } from "./UpdateContentModal";
 
@@ -14,8 +15,8 @@ interface CardProps {
   contentId?: string;
   type: string;
   createdAt?: Date;
-  refresh: () => void;
-  refreshTags: () => void;
+  refresh?: () => void;
+  refreshTags?: () => void;
 }
 
 const shareBrainFetcher = async ({

@@ -1,8 +1,8 @@
-import { Card } from "../components/Card";
-import { Sidebar } from "../components/Sidebar";
+import { Card } from "@/components/Card";
+import { Sidebar } from "@/components/Sidebar";
 
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { useShareContent } from "../hooks/useShareContent";
+import { useShareContent } from "@/module/services/hooks/useShareContent";
 
 export function ShareBrain() {
   const [param] = useSearchParams();
