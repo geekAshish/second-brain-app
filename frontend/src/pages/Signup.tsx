@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify";
 import { Input } from "@/components/Input";
 import { Button } from "@/components/Button";
 import { useAuth } from "@/module/context/AuthContext";
+import { NavLink } from "react-router-dom";
 
 export default function Signup() {
   const { signup } = useAuth();
@@ -38,7 +39,7 @@ export default function Signup() {
 
   return (
     <div className="h-screen w-screen bg-gray-200 flex justify-center items-center">
-      <div className="bg-white rounded-xl border min-w-48 p-4">
+      <div className="bg-white rounded-xl border min-w-48 p-2">
         <Input
           value={userData?.username}
           onChange={handleUserData}
@@ -51,12 +52,14 @@ export default function Signup() {
           placeholder="Email"
           name="email"
           type="email"
+          className="mt-3"
         />
         <Input
           value={userData?.password}
           onChange={handleUserData}
           placeholder="Password"
           name="password"
+          className="mt-3"
         />
         <div className="flex justify-center p-2">
           <Button
@@ -66,6 +69,13 @@ export default function Signup() {
             text="Signup"
             fullWidth={true}
           />
+        </div>
+
+        <div className="text-center">
+          <div className="w-full bg-gray-200 h-[1px]" />
+          <NavLink to={"/signin"} className={"text-xs underline text-blue-400"}>
+            Already have account?
+          </NavLink>
         </div>
       </div>
 

@@ -74,8 +74,10 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onSuccessHandler = (data: any) => {
-    localStorage.setItem("access_token", data?.access_token);
-    setUser(data);
+    console.log(data);
+
+    localStorage.setItem("access_token", data?.data?.access_token);
+    setUser(data?.user);
     setIsAuthenticated(true);
 
     onSuccessNotify("Signin Successful");
