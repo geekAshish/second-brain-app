@@ -18,6 +18,10 @@ export default function Signup() {
     const email = emailRef.current?.value;
     const password = passwordRef.current?.value;
 
+    if (!username) return;
+    if (!email) return;
+    if (!password) return;
+
     login({ username, email, password });
   }
 

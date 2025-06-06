@@ -1,16 +1,19 @@
 import { useState, createContext, useContext, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
+
 import {
   AuthContextInterface,
   UserProfileInterface,
+  UserProfileLoginInterface,
 } from "../interface/interface";
+
 import { useSignup } from "../services/hooks/auth/use-auth";
-import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import { onErrorNotify, onSuccessNotify } from "../utils/toastNotify";
 
 const AuthContext = createContext<AuthContextInterface>({
   isAuthenticated: false,
   user: { username: "", email: "" },
-  login: (userData: UserProfileInterface) => {
+  login: (userData: UserProfileLoginInterface) => {
     console.log(userData);
   },
   logout: Function,
@@ -23,10 +26,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<UserProfileInterface | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const onSuccessNotify = () => toast("You have signed up!");
-  const onErrorNotify = (msg: string) => toast(msg, { type: "error" });
-
-  const login = (userData: any) => {
+  const login = (userData: UserProfileLoginInterface) => {
     if (userData) {
       mutate(
         {
@@ -53,7 +53,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
     setUser(data);
     setIsAuthenticated(true);
 
-    onSuccessNotify();
+    onSuccessNotify("Signin Successful");
 
     setTimeout(() => {
       navigate("/dashboard");
