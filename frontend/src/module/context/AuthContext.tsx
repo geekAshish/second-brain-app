@@ -27,6 +27,7 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = (userData: UserProfileLoginInterface) => {
+    console.log("api hit", userData);
     if (userData) {
       mutate(
         {
@@ -39,7 +40,9 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             onSuccessHandler(data);
           },
           onError: (err: any) => {
-            onErrorHandler(err?.response.data?.msg);
+            console.log(err);
+
+            onErrorHandler(err?.response.data?.msg || "something went wrong");
           },
         }
       );
@@ -61,6 +64,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onErrorHandler = (err: string) => {
+    console.log("on error handler");
+
     onErrorNotify(err);
   };
 
