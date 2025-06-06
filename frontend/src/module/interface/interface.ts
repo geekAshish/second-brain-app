@@ -1,5 +1,5 @@
-export interface UserProfileLoginInterface {
-  username: string;
+export interface UserProfileSigninInterface {
+  username?: string;
   email: string;
   password: string;
 }
@@ -12,6 +12,7 @@ export interface UserProfileInterface {
 export interface AuthContextInterface {
   user: UserProfileInterface | null;
   isAuthenticated: boolean;
-  login: (userData: UserProfileLoginInterface) => void;
+  signup: (userData: UserProfileSigninInterface) => void;
+  signin: (userData: UserProfileSigninInterface) => void;
   logout: () => void;
 }

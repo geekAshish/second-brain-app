@@ -1,7 +1,8 @@
+import { BACKEND_URL } from "@/config";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-const BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const BASE_URL = BACKEND_URL;
 const REDIRECT_PAGE_URL = "/welcome";
 
 export const clearTokenAndAccessToken = () => {

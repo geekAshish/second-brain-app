@@ -4,16 +4,19 @@ import { useNavigate } from "react-router-dom";
 import {
   AuthContextInterface,
   UserProfileInterface,
-  UserProfileLoginInterface,
+  UserProfileSigninInterface,
 } from "../interface/interface";
 
-import { useSignup } from "../services/hooks/auth/use-auth";
+import { useSignin, useSignup } from "../services/hooks/auth/use-auth";
 import { onErrorNotify, onSuccessNotify } from "../utils/toastNotify";
 
 const AuthContext = createContext<AuthContextInterface>({
   isAuthenticated: false,
   user: { username: "", email: "" },
-  login: (userData: UserProfileLoginInterface) => {
+  signup: (userData: UserProfileSigninInterface) => {
+    console.log(userData);
+  },
+  signin: (userData) => {
     console.log(userData);
   },
   logout: Function,
@@ -21,17 +24,17 @@ const AuthContext = createContext<AuthContextInterface>({
 
 const AuthProvider = ({ children }: { children: ReactNode }) => {
   const navigate = useNavigate();
-  const { mutate } = useSignup();
+  const { mutate: signupMutate } = useSignup();
+  const { mutate: signinMutate } = useSignin();
 
   const [user, setUser] = useState<UserProfileInterface | null>(null);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = (userData: UserProfileLoginInterface) => {
-    console.log("api hit", userData);
+  const signup = (userData: UserProfileSigninInterface) => {
     if (userData) {
-      mutate(
+      signupMutate(
         {
-          username: userData?.username,
+          username: userData?.username || "",
           email: userData?.email,
           password: userData?.password,
         },
@@ -40,9 +43,28 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
             onSuccessHandler(data);
           },
           onError: (err: any) => {
-            console.log(err);
+            onErrorHandler(err.data?.msg || "something went wrong");
+          },
+        }
+      );
+    } else {
+      onErrorHandler("Invalid user data");
+    }
+  };
 
-            onErrorHandler(err?.response.data?.msg || "something went wrong");
+  const signin = (userData) => {
+    if (userData) {
+      signinMutate(
+        {
+          password: userData?.password,
+          email: userData?.email,
+        },
+        {
+          onSuccess: (data) => {
+            onSuccessHandler(data);
+          },
+          onError: (err: any) => {
+            onErrorHandler(err.data?.msg || "something went wrong");
           },
         }
       );
@@ -64,8 +86,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onErrorHandler = (err: string) => {
-    console.log("on error handler");
-
     onErrorNotify(err);
   };
 
@@ -79,7 +99,8 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   const authContextValues: AuthContextInterface = {
     user,
     isAuthenticated,
-    login,
+    signup,
+    signin,
     logout,
   };
 

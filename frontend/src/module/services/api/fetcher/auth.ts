@@ -1,8 +1,6 @@
-import axios from "axios";
+import { Client } from "../../api.client";
 
-import { BACKEND_URL } from "@/config";
-
-export const signupFetcher = async ({
+export const signupFetcher = ({
   username,
   email,
   password,
@@ -11,34 +9,22 @@ export const signupFetcher = async ({
   email: string;
   password: string;
 }) => {
-  try {
-    const reponse = await axios.post(BACKEND_URL + "/api/v1/auth/register", {
-      username,
-      email,
-      password,
-    });
-
-    return reponse?.data;
-  } catch (err: any) {
-    throw new Error(err?.response?.data?.message || "Signup failed");
-  }
+  return Client.post("/api/v1/auth/register", {
+    username,
+    email,
+    password,
+  });
 };
 
-export const signinFetcher = async ({
-  email,
+export const signinFetcher = ({
   password,
+  email,
 }: {
-  email: string;
   password: string;
+  email: string;
 }) => {
-  try {
-    const reponse = await axios.post(BACKEND_URL + "/api/v1/auth/login", {
-      email,
-      password,
-    });
-
-    return reponse?.data;
-  } catch (err: any) {
-    throw new Error(err?.response?.data || "Signin failed");
-  }
+  return Client.post("/api/v1/auth/login", {
+    password,
+    email,
+  });
 };

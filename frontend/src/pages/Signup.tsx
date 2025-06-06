@@ -7,7 +7,7 @@ import { Button } from "@/components/Button";
 import { useAuth } from "@/module/context/AuthContext";
 
 export default function Signup() {
-  const { login } = useAuth();
+  const { signup } = useAuth();
 
   const [userData, setUserData] = useState({
     username: "",
@@ -15,12 +15,12 @@ export default function Signup() {
     password: "",
   });
 
-  async function signup() {
+  async function signupHandler() {
     if (!userData?.username) return;
     if (!userData?.email) return;
     if (!userData?.password) return;
 
-    login({
+    signup({
       username: userData?.username,
       email: userData?.email,
       password: userData?.password,
@@ -60,7 +60,7 @@ export default function Signup() {
         />
         <div className="flex justify-center p-2">
           <Button
-            onClick={signup}
+            onClick={signupHandler}
             loading={false}
             variant="primary"
             text="Signup"
