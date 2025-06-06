@@ -3,7 +3,7 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 const BASE_URL = BACKEND_URL;
-const REDIRECT_PAGE_URL = "/welcome";
+const REDIRECT_PAGE_URL = "/signin";
 
 export const clearTokenAndAccessToken = () => {
   localStorage.removeItem("token");

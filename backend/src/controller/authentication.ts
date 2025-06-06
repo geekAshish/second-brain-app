@@ -18,8 +18,6 @@ export const register = async (req: Request, res: Response) => {
 
   const { success } = registerShema.safeParse(req.body);
 
-  console.log(success);
-
   if (!email || !password) {
     throw new errors.BadRequest("Please provide email and password");
   }
@@ -49,13 +47,13 @@ export const login = async (req: Request, res: Response) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    throw new errors.UnauthenticatedError("Invalid Credentials");
+    throw new errors.BadRequest("Invalid Credentials");
   }
 
   const isPasswordCorrect = await user.comparePassword(String(password));
 
   if (!isPasswordCorrect) {
-    throw new errors.UnauthenticatedError("Invalid Credentials");
+    throw new errors.BadRequest("Invalid Credentials");
   }
 
   const token = user.createJwt();
