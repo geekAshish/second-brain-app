@@ -9,23 +9,23 @@ import { useContent } from "@/module/services/hooks/useContent";
 import { CreateContentModal } from "@/components/CreateContentModal";
 
 import { useTags } from "@/module/services/hooks/useTags";
-
-import { shareBrainFetcher } from "@/module/services/api/fetcher/brain";
+import { useGetUpdateShareBrainStatusFetcher } from "@/module/services/hooks/useShare";
 
 export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
-  const [urlHash, setUrlHash] = useState("");
   const [selectedTagId, setSelectedTagId] = useState<string>("");
 
-  const { contents, refresh } = useContent({ tag: selectedTagId });
+  const { data: shareUrlData, mutate: shareURLMutate } =
+    useGetUpdateShareBrainStatusFetcher();
+
+  const { data: contentsData, refetch } = useContent({ tag: selectedTagId });
   const { tags, refresh: refreshTags } = useTags();
 
-  console.log(contents);
+  console.log(shareUrlData);
 
   const handleShareBrain = async () => {
-    const hash = await shareBrainFetcher();
-    setUrlHash(hash);
+    shareURLMutate();
   };
 
   const selectTagHandler = ({ tagId }: { tagId: string }) => {
@@ -45,7 +45,7 @@ export default function Dashboard() {
           onClose={() => {
             setModalOpen(false);
           }}
-          refresh={refresh}
+          refresh={refetch}
           refreshTags={refreshTags}
         />
         <Modal
@@ -53,7 +53,7 @@ export default function Dashboard() {
           onClose={() => setOpenShareBrainModal(false)}
         >
           <div>
-            <p>http://localhost:5173/share-brain/{urlHash}?type=brain</p>
+            <p>http://localhost:5173/share-brain/{shareUrlData}?type=brain</p>
           </div>
         </Modal>
         <div className="flex justify-end gap-4">
@@ -77,7 +77,7 @@ export default function Dashboard() {
         </div>
 
         <div className="columns-1 sm:columns-3 gap-4 mt-10">
-          {contents?.map(
+          {contentsData?.map(
             (
               { type, link, title, description, _id, createdAt },
               index: number
@@ -91,7 +91,7 @@ export default function Dashboard() {
                   title={title}
                   description={description}
                   createdAt={createdAt}
-                  refresh={refresh}
+                  refresh={refetch}
                   refreshTags={refreshTags}
                 />
               </div>

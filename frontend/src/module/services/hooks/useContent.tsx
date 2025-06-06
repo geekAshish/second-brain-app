@@ -1,34 +1,11 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { BACKEND_URL } from "../../../config";
+import { useQuery } from "@tanstack/react-query";
+import { brainFetcher } from "../api/fetcher/brain";
 
-interface tagType {
-  tag: string | undefined;
-}
+export function useContent({ tag }) {
+  const { data, refetch, isSuccess, isError, error, isLoading } = useQuery({
+    queryKey: ["brain-content", tag],
+    queryFn: () => brainFetcher(tag),
+  });
 
-export function useContent({ tag }: tagType) {
-  const [contents, setContents] = useState([]);
-
-  let tagQuery: string | undefined;
-  if (tag) {
-    tagQuery = `?tag=${tag}`;
-  }
-
-  function refresh() {
-    axios
-      .get(`${BACKEND_URL}/api/v1/content${tagQuery || ""}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      })
-      .then((response) => {
-        setContents(response.data.data);
-      });
-  }
-
-  useEffect(() => {
-    refresh();
-  }, [tag]);
-
-  return { contents, refresh };
+  return { data: data?.data, refetch, isSuccess, isError, error, isLoading };
 }

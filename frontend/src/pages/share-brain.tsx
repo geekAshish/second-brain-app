@@ -2,19 +2,25 @@ import { Card } from "@/components/Card";
 import { Sidebar } from "@/components/Sidebar";
 
 import { Link, useParams, useSearchParams } from "react-router-dom";
-import { useShareContent } from "@/module/services/hooks/useShareContent";
+import {
+  useGetShareBrainContentFetcher,
+  useGetShareBrainFetcher,
+} from "@/module/services/hooks/useShare";
 
 export function ShareBrain() {
   const [param] = useSearchParams();
   const type = param.get("type");
   const { brainId } = useParams();
 
-  const { contents, error } = useShareContent({ brainId, type });
+  const { data: brainData } = useGetShareBrainFetcher(brainId || "");
+  const { data: contentData, error } = useGetShareBrainContentFetcher(
+    brainId || ""
+  );
 
   if (error) {
     return (
       <div className="h-screen flex items-center justify-center flex-col">
-        <p>{error}</p>
+        <p>{error?.message}</p>
 
         <Link
           to={"/dashboard"}
@@ -26,13 +32,13 @@ export function ShareBrain() {
     );
   }
 
-  if (contents?.length > 0) {
+  if (contentData?.length > 0) {
     return (
       <div>
         <Sidebar />
         <div className="p-4 ml-52 min-h-screen bg-gray-100 border-2">
           <div className="columns-1 sm:columns-2 gap-4 mt-10">
-            {contents?.map(
+            {contentData?.map(
               (
                 { type, link, title, description, _id, createdAt },
                 index: number
@@ -63,12 +69,12 @@ export function ShareBrain() {
           <div className="columns-1 sm:columns-2 gap-4 mt-10">
             <div className="mb-4 break-inside-avoid">
               <Card
-                contentId={contents?.contentId?._id}
-                type={contents?.contentId?.type}
-                link={contents?.contentId?.link}
-                title={contents?.contentId?.title}
-                description={contents?.contentId?.description}
-                createdAt={contents?.contentId?.createdAt}
+                contentId={brainData?.contentId?._id}
+                type={brainData?.contentId?.type}
+                link={brainData?.contentId?.link}
+                title={brainData?.contentId?.title}
+                description={brainData?.contentId?.description}
+                createdAt={brainData?.contentId?.createdAt}
               />
             </div>
           </div>
