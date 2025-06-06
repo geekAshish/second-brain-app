@@ -20,9 +20,9 @@ export default function Dashboard() {
     useGetUpdateShareBrainStatusFetcher();
 
   const { data: contentsData, refetch } = useContent({ tag: selectedTagId });
-  const { tags, refresh: refreshTags } = useTags();
+  const { data: tags, refetch: refreshTags } = useTags();
 
-  console.log(shareUrlData);
+  console.log(contentsData);
 
   const handleShareBrain = async () => {
     shareURLMutate();

@@ -7,5 +7,12 @@ export function useContent({ tag }) {
     queryFn: () => brainFetcher(tag),
   });
 
-  return { data: data?.data, refetch, isSuccess, isError, error, isLoading };
+  return {
+    data: data?.data?.data,
+    refetch,
+    isSuccess,
+    isError,
+    error,
+    isLoading,
+  };
 }

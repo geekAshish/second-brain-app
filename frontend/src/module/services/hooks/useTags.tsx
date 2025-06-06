@@ -1,25 +1,11 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
-import { BACKEND_URL } from "../../../config";
+import { useQuery } from "@tanstack/react-query";
+import { getTagFetcher } from "../api/fetcher/tag";
 
 export function useTags() {
-  const [tags, setTags] = useState([]);
+  const { data, refetch, isError, isLoading } = useQuery({
+    queryKey: ["get-tags"],
+    queryFn: () => getTagFetcher(),
+  });
 
-  function refresh() {
-    axios
-      .get(`${BACKEND_URL}/api/v1/content/tags`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-        },
-      })
-      .then((response) => {
-        setTags(response.data?.data);
-      });
-  }
-
-  useEffect(() => {
-    refresh();
-  }, []);
-
-  return { tags, refresh };
+  return { data: data?.data, refetch, isError, isLoading };
 }

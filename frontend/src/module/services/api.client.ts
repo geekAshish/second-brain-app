@@ -14,7 +14,8 @@ const defaultHeaders = {
 // Function to get the access token from local storage
 const getAccessToken = (): string | null => {
   return typeof window !== "undefined"
-    ? localStorage.getItem("token") || localStorage.getItem("TOKEN")
+    ? localStorage.getItem("access_token") ||
+        localStorage.getItem("ACCESS_TOKEN")
     : null;
 };
 

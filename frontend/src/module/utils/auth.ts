@@ -6,13 +6,13 @@ const BASE_URL = BACKEND_URL;
 const REDIRECT_PAGE_URL = "/signin";
 
 export const clearTokenAndAccessToken = () => {
-  localStorage.removeItem("token");
+  localStorage.removeItem("access_token");
   localStorage.removeItem("refresh_token");
   localStorage.clear();
 };
 
 export const getValueFromToken = (key: any) => {
-  const token = localStorage.getItem("token");
+  const token = localStorage.getItem("access_token");
   const jwtObject = token && jwtDecode(token);
   const value = jwtObject?.[key];
   return value;
@@ -79,7 +79,7 @@ export const refreshTokenAPI = async (): Promise<
           response.data?.payload?.token || "";
 
         // Store the new tokens in local storage
-        localStorage.setItem("token", newAccessToken?.token);
+        localStorage.setItem("access_token", newAccessToken?.token);
         localStorage.setItem("refresh_token", newRefreshToken?.token);
         return newAccessToken?.token;
       } else {
