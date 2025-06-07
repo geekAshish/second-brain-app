@@ -7,5 +7,5 @@ export function useTags() {
     queryFn: () => getTagFetcher(),
   });
 
-  return { data: data?.data, refetch, isError, isLoading };
+  return { data: data?.data?.data, refetch, isError, isLoading };
 }
