@@ -2,8 +2,6 @@ import { useState } from "react";
 import { CrossIcon } from "../icons/CrossIcon";
 import { Button } from "./Button";
 import { Input } from "./Input";
-import { BACKEND_URL } from "../config";
-import axios from "axios";
 import { useCreateContent } from "@/module/services/hooks/useContent";
 import { onErrorNotify, onSuccessNotify } from "@/module/utils/toastNotify";
 

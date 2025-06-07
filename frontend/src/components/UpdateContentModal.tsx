@@ -4,6 +4,8 @@ import { Button } from "./Button";
 import { Input } from "./Input";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
+import { useUpdateContent } from "@/module/services/hooks/useContent";
+import { onSuccessNotify } from "@/module/utils/toastNotify";
 
 interface PropType {
   open: boolean;
@@ -46,11 +48,12 @@ export function UpdateContentModal({
     description,
   });
 
+  const { data, mutate } = useUpdateContent();
+
   async function addContent() {
     const type = getTypeFromLink(link || "");
 
-    await axios.put(
-      `${BACKEND_URL}/api/v1/content`,
+    mutate(
       {
         link: contentObj?.link,
         title: contentObj?.title,
@@ -59,18 +62,22 @@ export function UpdateContentModal({
         description: contentObj?.description,
       },
       {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        onSuccess: () => {
+          refresh();
+          refreshTags();
+          onSuccessNotify("Updated successfully");
+          setTimeout(() => {
+            onClose();
+          }, 300);
+        },
+        onError: () => {
+          onSuccessNotify("something went wrong");
+          setTimeout(() => {
+            onClose();
+          }, 300);
         },
       }
     );
-
-    refresh();
-    refreshTags();
-
-    setTimeout(() => {
-      onClose();
-    }, 300);
   }
 
   const changeHandler = (name: string, value: string) => {
@@ -108,23 +115,26 @@ export function UpdateContentModal({
                     value={contentObj?.title}
                     onChange={changeHandler}
                     placeholder={"Title"}
-                    label={"title"}
+                    name={"title"}
+                    label={"Title"}
                   />
                   <Input
                     value={contentObj?.description}
                     onChange={changeHandler}
                     placeholder={"Description"}
-                    label={"description"}
+                    name={"description"}
+                    label={"Description"}
                   />
                   <Input
                     value={contentObj?.link}
                     onChange={changeHandler}
                     placeholder={"Link"}
-                    label={"link"}
+                    name={"link"}
+                    label={"Link"}
                   />
                 </div>
 
-                <div className="flex justify-center">
+                <div className="flex justify-center mt-3">
                   <Button
                     onClick={addContent}
                     variant="primary"

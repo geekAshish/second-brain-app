@@ -54,7 +54,7 @@ export function Input({
   return (
     <div>
       {label && (
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm text-gray-700 mt-2">
           {label}
           {isRequired && <span className="text-red-500">*</span>}
         </label>

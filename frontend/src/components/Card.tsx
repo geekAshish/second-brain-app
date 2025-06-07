@@ -15,8 +15,8 @@ interface CardProps {
   contentId?: string;
   type: string;
   createdAt?: Date;
-  refresh?: () => void;
-  refreshTags?: () => void;
+  refresh: () => void;
+  refreshTags: () => void;
 }
 
 const shareBrainFetcher = async ({
