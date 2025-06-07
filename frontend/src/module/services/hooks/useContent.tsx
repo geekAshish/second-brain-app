@@ -1,5 +1,5 @@
-import { useQuery } from "@tanstack/react-query";
-import { brainFetcher } from "../api/fetcher/brain";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { brainFetcher, createBrainFetcher } from "../api/fetcher/brain";
 
 export function useContent({ tag }) {
   const { data, refetch, isSuccess, isError, error, isLoading } = useQuery({
@@ -14,5 +14,20 @@ export function useContent({ tag }) {
     isError,
     error,
     isLoading,
+  };
+}
+
+export function useCreateContent() {
+  const { data, mutate, isSuccess, isError, error, isPending } = useMutation({
+    mutationFn: createBrainFetcher,
+  });
+
+  return {
+    data: data?.data,
+    mutate,
+    isSuccess,
+    isError,
+    error,
+    isPending,
   };
 }

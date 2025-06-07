@@ -22,7 +22,7 @@ export default function Dashboard() {
   const { data: contentsData, refetch } = useContent({ tag: selectedTagId });
   const { data: tags, refetch: refreshTags } = useTags();
 
-  console.log(contentsData);
+  console.log(shareUrlData);
 
   const handleShareBrain = async () => {
     shareURLMutate();
@@ -53,7 +53,9 @@ export default function Dashboard() {
           onClose={() => setOpenShareBrainModal(false)}
         >
           <div>
-            <p>http://localhost:5173/share-brain/{shareUrlData}?type=brain</p>
+            <p>
+              http://localhost:5173/share-brain/{shareUrlData?.hash}?type=brain
+            </p>
           </div>
         </Modal>
         <div className="flex justify-end gap-4">

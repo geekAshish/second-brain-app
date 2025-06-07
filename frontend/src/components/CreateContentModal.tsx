@@ -4,15 +4,12 @@ import { Button } from "./Button";
 import { Input } from "./Input";
 import { BACKEND_URL } from "../config";
 import axios from "axios";
+import { useCreateContent } from "@/module/services/hooks/useContent";
+import { onErrorNotify, onSuccessNotify } from "@/module/utils/toastNotify";
 
 interface PropType {
   open: boolean;
   onClose: () => void;
-  title?: string;
-  contentId?: string;
-  link?: string;
-  description?: string;
-  tag?: string;
   refresh: () => void;
   refreshTags: () => void;
 }
@@ -33,28 +30,22 @@ const getTypeFromLink = (link: string) => {
 export function CreateContentModal({
   open,
   onClose,
-  title,
-  link,
-  contentId,
-  description,
-  tag,
   refresh,
   refreshTags,
 }: PropType) {
   const [contentObj, setContentObj] = useState({
-    contentId,
-    title,
-    link,
-    description,
-    tag,
+    contentId: "",
+    title: "",
+    link: "",
+    description: "",
+    tag: "",
   });
   const [tags, setTags] = useState<string[]>([]);
+  const { data, mutate: createContentMutate } = useCreateContent();
 
   async function addContent() {
     const type = getTypeFromLink(contentObj?.link || "");
-
-    await axios.post(
-      `${BACKEND_URL}/api/v1/content`,
+    createContentMutate(
       {
         link: contentObj?.link,
         title: contentObj?.title,
@@ -63,15 +54,25 @@ export function CreateContentModal({
         tags: tags,
       },
       {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("access_token")}`,
+        onSuccess: () => {
+          refresh();
+          refreshTags();
+          onClose();
+          setContentObj({
+            contentId: "",
+            title: "",
+            link: "",
+            description: "",
+            tag: "",
+          });
+          onSuccessNotify("Content created successfully");
+        },
+        onError: () => {
+          onClose();
+          onErrorNotify("unable to created content");
         },
       }
     );
-
-    refresh();
-    refreshTags();
-    onClose();
   }
 
   const addTagHandler = (name: string, value: string) => {
@@ -119,27 +120,30 @@ export function CreateContentModal({
                     value={contentObj?.title}
                     onChange={changeHandler}
                     placeholder={"Title"}
-                    label={"title"}
+                    name={"title"}
                     className="mb-2"
                   />
                   <Input
                     value={contentObj?.description}
                     onChange={changeHandler}
                     placeholder={"Description"}
-                    label={"description"}
+                    name={"description"}
                     className="mb-2"
                   />
                   <Input
                     value={contentObj?.tag}
                     onChange={changeHandler}
                     placeholder={"Tag"}
-                    label={"tag"}
+                    name={"tag"}
                     onEnter={addTagHandler}
                   />
                   <div className="mb-2">
-                    {tags?.map((t: string) => {
+                    {tags?.map((t: string, i: number) => {
                       return (
-                        <span className="text-[10px] bg-slate-300 p-1 rounded-full mr-2">
+                        <span
+                          key={i}
+                          className="text-[10px] bg-slate-300 p-1 rounded-full mr-2"
+                        >
                           {t}
                         </span>
                       );
@@ -150,7 +154,7 @@ export function CreateContentModal({
                     value={contentObj?.link}
                     onChange={changeHandler}
                     placeholder={"Link"}
-                    label={"link"}
+                    name={"link"}
                     className="mb-2"
                   />
                 </div>
