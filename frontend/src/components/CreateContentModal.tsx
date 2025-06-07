@@ -4,6 +4,7 @@ import { Button } from "./Button";
 import { Input } from "./Input";
 import { useCreateContent } from "@/module/services/hooks/useContent";
 import { onErrorNotify, onSuccessNotify } from "@/module/utils/toastNotify";
+import Chip from "./ui/chip";
 
 interface PropType {
   open: boolean;
@@ -39,7 +40,7 @@ export function CreateContentModal({
     tag: "",
   });
   const [tags, setTags] = useState<string[]>([]);
-  const { data, mutate: createContentMutate } = useCreateContent();
+  const { mutate: createContentMutate } = useCreateContent();
 
   async function addContent() {
     const type = getTypeFromLink(contentObj?.link || "");
@@ -81,6 +82,11 @@ export function CreateContentModal({
     if (value) {
       setTags((prev) => [...prev, value]);
     }
+  };
+
+  const removeTagHandler = (tag: string) => {
+    const filteredTags = tags.filter((t) => t !== tag);
+    setTags(filteredTags);
   };
 
   const changeHandler = (name: string, value: string) => {
@@ -135,15 +141,14 @@ export function CreateContentModal({
                     name={"tag"}
                     onEnter={addTagHandler}
                   />
-                  <div className="mb-2">
+                  <div className="flex items-center max-w-52 flex-wrap gap-1 my-2">
                     {tags?.map((t: string, i: number) => {
                       return (
-                        <span
+                        <Chip
+                          label={t}
                           key={i}
-                          className="text-[10px] bg-slate-300 p-1 rounded-full mr-2"
-                        >
-                          {t}
-                        </span>
+                          onClickRemove={removeTagHandler}
+                        />
                       );
                     })}
                   </div>
