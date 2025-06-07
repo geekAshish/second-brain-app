@@ -6,6 +6,7 @@ import { BACKEND_URL } from "../config";
 
 import { Modal } from "./ui/Modal";
 import { UpdateContentModal } from "./UpdateContentModal";
+import { useLocation } from "react-router-dom";
 
 interface CardProps {
   title: string;
@@ -67,6 +68,8 @@ export function Card({
   refresh = () => {},
   refreshTags = () => {},
 }: CardProps) {
+  const location = useLocation();
+  const pathname = location.pathname;
   const [urlHash, setUrlHash] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
@@ -109,7 +112,7 @@ export function Card({
       </Modal>
 
       <div className="p-4 bg-white rounded-md border-gray-200 max-w-72 border min-h-48 min-w-72">
-        {contentId && (
+        {contentId && pathname?.includes("dashboard") && (
           <div className="flex justify-end items-end">
             <label className="inline-flex items-center justify-end cursor-pointer">
               <span className="mr-1 text-sm font-medium text-gray-900 dark:text-gray-500">
