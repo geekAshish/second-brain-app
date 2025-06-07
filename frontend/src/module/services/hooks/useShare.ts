@@ -13,8 +13,8 @@ export const useGetUpdateShareBrainStatusFetcher = () => {
   return { data: data?.data, mutate, isPending, isError, error };
 };
 
-export const useGetShareBrainFetcher = (brainId: string) => {
-  const isEnabled = brainId ? true : false;
+export const useGetShareBrainFetcher = (brainId: string, type: string) => {
+  const isEnabled = brainId && type === "brain" ? true : false;
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["get-share-brain", brainId],
@@ -22,11 +22,14 @@ export const useGetShareBrainFetcher = (brainId: string) => {
     enabled: isEnabled,
   });
 
-  return { data: data?.data, isLoading, isError, error };
+  return { data: data?.data?.content, isLoading, isError, error };
 };
 
-export const useGetShareBrainContentFetcher = (brainId: string) => {
-  const isEnabled = brainId ? true : false;
+export const useGetShareBrainContentFetcher = (
+  brainId: string,
+  type: string
+) => {
+  const isEnabled = brainId && type === "content" ? true : false;
 
   const { data, isLoading, isError, error } = useQuery({
     queryKey: ["get-share-brain-content", brainId],
@@ -34,5 +37,5 @@ export const useGetShareBrainContentFetcher = (brainId: string) => {
     enabled: isEnabled,
   });
 
-  return { data: data?.data, isLoading, isError, error };
+  return { data: data?.data?.content, isLoading, isError, error };
 };

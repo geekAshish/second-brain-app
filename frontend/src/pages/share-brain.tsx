@@ -7,14 +7,18 @@ import {
   useGetShareBrainFetcher,
 } from "@/module/services/hooks/useShare";
 
-export function ShareBrain() {
+export default function ShareBrain() {
   const [param] = useSearchParams();
   const type = param.get("type");
   const { brainId } = useParams();
 
-  const { data: brainData } = useGetShareBrainFetcher(brainId || "");
+  const { data: brainData } = useGetShareBrainFetcher(
+    brainId || "",
+    type || ""
+  );
   const { data: contentData, error } = useGetShareBrainContentFetcher(
-    brainId || ""
+    brainId || "",
+    type || ""
   );
 
   if (error) {
@@ -32,13 +36,13 @@ export function ShareBrain() {
     );
   }
 
-  if (contentData?.length > 0) {
+  if (brainData?.length > 0) {
     return (
       <div>
         <Sidebar />
         <div className="p-4 ml-52 min-h-screen bg-gray-100 border-2">
           <div className="columns-1 sm:columns-2 gap-4 mt-10">
-            {contentData?.map(
+            {brainData?.map(
               (
                 { type, link, title, description, _id, createdAt },
                 index: number
@@ -69,12 +73,12 @@ export function ShareBrain() {
           <div className="columns-1 sm:columns-2 gap-4 mt-10">
             <div className="mb-4 break-inside-avoid">
               <Card
-                contentId={brainData?.contentId?._id}
-                type={brainData?.contentId?.type}
-                link={brainData?.contentId?.link}
-                title={brainData?.contentId?.title}
-                description={brainData?.contentId?.description}
-                createdAt={brainData?.contentId?.createdAt}
+                contentId={contentData?.contentId?._id}
+                type={contentData?.contentId?.type}
+                link={contentData?.contentId?.link}
+                title={contentData?.contentId?.title}
+                description={contentData?.contentId?.description}
+                createdAt={contentData?.contentId?.createdAt}
               />
             </div>
           </div>

@@ -15,8 +15,8 @@ interface CardProps {
   contentId?: string;
   type: string;
   createdAt?: Date;
-  refresh: () => void;
-  refreshTags: () => void;
+  refresh?: () => void;
+  refreshTags?: () => void;
 }
 
 const shareBrainFetcher = async ({
@@ -64,8 +64,8 @@ export function Card({
   type,
   description,
   createdAt,
-  refresh,
-  refreshTags,
+  refresh = () => {},
+  refreshTags = () => {},
 }: CardProps) {
   const [urlHash, setUrlHash] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
@@ -114,14 +114,16 @@ export function Card({
           </div>
           <div className="flex items-center">
             <div className="p-2 text-gray-500 cursor-pointer hover:bg-slate-200 rounded">
-              <div
-                onClick={() => {
-                  handleShareBrain();
-                  setOpenShareBrainModal(true);
-                }}
-              >
-                <Share />
-              </div>
+              {contentId && (
+                <div
+                  onClick={() => {
+                    handleShareBrain();
+                    setOpenShareBrainModal(true);
+                  }}
+                >
+                  <Share />
+                </div>
+              )}
             </div>
             {!location.pathname?.includes("share-brain") && (
               <div className="p-2 text-gray-500 cursor-pointer hover:bg-slate-200 rounded">

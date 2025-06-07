@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 const Signin = lazy(() => import("@/pages/Signin"));
 const Signup = lazy(() => import("@/pages/Signup"));
 const Dashboard = lazy(() => import("@/pages/dashboard"));
+const ShareBrain = lazy(() => import("@/pages/share-brain"));
 const NotFound = lazy(() => import("@/pages/NotFound"));
 
 export default function AppRoutes() {
@@ -45,7 +46,7 @@ export default function AppRoutes() {
         path="/share-brain/:brainId"
         element={
           <Suspense>
-            <Signin />
+            <ShareBrain />
           </Suspense>
         }
       />
