@@ -31,6 +31,8 @@ export const getAllContents = async (req: Request, res: Response) => {
       query.tags = { $in: [tag] }; // Match if tag is in the tags array
     }
 
+    const totalContent = await content.countDocuments(query);
+
     let results = content
       .find(query)
       .populate("userId", "username")
@@ -38,7 +40,7 @@ export const getAllContents = async (req: Request, res: Response) => {
       .sort({ createdAt: -1 });
 
     const page: number = Number(req.query.page || 1);
-    const size: number = Number(req.query.size || 7);
+    const size: number = Number(req.query.size || 2);
     const skip: number = (page - 1) * size;
 
     results = results.skip(skip).limit(size);
@@ -47,6 +49,7 @@ export const getAllContents = async (req: Request, res: Response) => {
 
     res.status(StatusCodes.OK).json({
       data: contents,
+      page: { page, size, totalContent },
     });
   } catch (error: any) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
