@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
-import { content } from "../models/content";
+import { Types } from "mongoose";
 import { StatusCodes } from "http-status-codes";
+
+import { Tag } from "../models/tag";
 import { link } from "../models/link";
+import { content } from "../models/content";
 import { ShareContent } from "../models/shareContent";
-import { User } from "../models/user";
+
 import { random } from "../utils";
 import { errors } from "../error";
-import { Tag } from "../models/tag";
-import { Types } from "mongoose";
 
 export const getAllContents = async (req: Request, res: Response) => {
   try {
@@ -30,14 +31,21 @@ export const getAllContents = async (req: Request, res: Response) => {
       query.tags = { $in: [tag] }; // Match if tag is in the tags array
     }
 
-    const contents = await content
+    let results = content
       .find(query)
       .populate("userId", "username")
       .populate("tags", "tag")
       .sort({ createdAt: -1 });
 
+    const page: number = Number(req.query.page || 1);
+    const size: number = Number(req.query.size || 7);
+    const skip: number = (page - 1) * size;
+
+    results = results.skip(skip).limit(size);
+
+    const contents = await results;
+
     res.status(StatusCodes.OK).json({
-      success: true,
       data: contents,
     });
   } catch (error: any) {

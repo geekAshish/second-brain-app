@@ -21,9 +21,6 @@ export default function Dashboard() {
 
   const { data: contentsData, refetch } = useContent({ tag: selectedTagId });
   const { data: tags, refetch: refreshTags } = useTags();
-  console.log(tags);
-
-  console.log(shareUrlData);
 
   const handleShareBrain = async () => {
     shareURLMutate();
