@@ -1,7 +1,17 @@
 import { Client } from "../../api.client";
 
-export const brainFetcher = (tag: string) => {
-  return Client.get(`/api/v1/content${tag ? `?tag=${tag}` : ""}`);
+export const brainFetcher = ({
+  tag,
+  page,
+  size,
+}: {
+  tag: string;
+  page: number;
+  size: number;
+}) => {
+  return Client.get(
+    `/api/v1/content${tag ? `?tag=${tag}&` : "?"}page=${page}&size=${size}`
+  );
 };
 
 export const createBrainFetcher = (payload: any) => {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { Plus, Share } from "lucide-react";
 
 import { Card } from "@/components/Card";
@@ -12,6 +12,8 @@ import { useTags } from "@/module/services/hooks/useTags";
 import { useGetUpdateShareBrainStatusFetcher } from "@/module/services/hooks/useShare";
 
 export default function Dashboard() {
+  const observer = useRef<IntersectionObserver | null>(null);
+
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<string>("");
@@ -19,8 +21,44 @@ export default function Dashboard() {
   const { data: shareUrlData, mutate: shareURLMutate } =
     useGetUpdateShareBrainStatusFetcher();
 
-  const { data: contentsData, refetch } = useContent({ tag: selectedTagId });
+  const {
+    data: contentsData,
+    refetch,
+    isLoading,
+    fetchNextPage,
+    hasNextPage,
+  } = useContent({
+    tag: selectedTagId,
+    size: 3,
+  });
   const { data: tags, refetch: refreshTags } = useTags();
+
+  const lastPostElementRef = useCallback(
+    (node: HTMLDivElement | null) => {
+      if (isLoading) return;
+
+      if (observer.current) observer.current.disconnect();
+
+      observer.current = new IntersectionObserver(
+        (entries) => {
+          if (entries[0].isIntersecting && hasNextPage) {
+            fetchNextPage();
+          }
+        },
+        {
+          root: null,
+          rootMargin: "0px 0px 50px 0px",
+          threshold: 0.1,
+        }
+      );
+
+      if (node) {
+        // console.log("Attaching observer to", node);
+        observer.current.observe(node);
+      }
+    },
+    [isLoading, hasNextPage, fetchNextPage]
+  );
 
   const handleShareBrain = async () => {
     shareURLMutate();
@@ -77,26 +115,40 @@ export default function Dashboard() {
         </div>
 
         <div className="columns-1 sm:columns-3 gap-4 mt-10">
-          {contentsData?.map(
-            (
-              { type, link, title, description, _id, createdAt },
-              index: number
-            ) => (
-              <div key={index} className="mb-4 break-inside-avoid">
-                <Card
-                  key={index}
-                  contentId={_id}
-                  type={type}
-                  link={link}
-                  title={title}
-                  description={description}
-                  createdAt={createdAt}
-                  refresh={refetch}
-                  refreshTags={refreshTags}
-                />
-              </div>
-            )
-          )}
+          {contentsData?.pages.map((contentsPage) => {
+            const items = contentsPage?.data?.data || [];
+
+            return items.map(
+              (
+                { type, link, title, description, _id, createdAt },
+                index: number
+              ) => {
+                const isLast =
+                  index === items.length - 1 &&
+                  contentsData.pages[contentsData.pages.length - 1] ===
+                    contentsPage;
+
+                return (
+                  <div
+                    key={_id}
+                    className="mb-4 break-inside-avoid"
+                    ref={isLast ? lastPostElementRef : null}
+                  >
+                    <Card
+                      contentId={_id}
+                      type={type}
+                      link={link}
+                      title={title}
+                      description={description}
+                      createdAt={createdAt}
+                      refresh={refetch}
+                      refreshTags={refreshTags}
+                    />
+                  </div>
+                );
+              }
+            );
+          })}
         </div>
       </div>
     </div>

@@ -39,8 +39,8 @@ export const getAllContents = async (req: Request, res: Response) => {
       .populate("tags", "tag")
       .sort({ createdAt: -1 });
 
-    const page: number = Number(req.query.page || 1);
-    const size: number = Number(req.query.size || 2);
+    const page: number = Number(req.query?.page || 1);
+    const size: number = Number(req.query?.size || 2);
     const skip: number = (page - 1) * size;
 
     results = results.skip(skip).limit(size);
