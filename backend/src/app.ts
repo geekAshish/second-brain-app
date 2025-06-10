@@ -1,14 +1,19 @@
 import express from "express";
 import cors from "cors";
 import { config as c } from "dotenv";
+import swaggerUi from "swagger-ui-express";
 
-import { config } from "./modules/config/config";
-import authRouter from "./routes/auth";
-import { connectDB } from "./db/connect";
 import { errorHandlerMiddleware } from "./middleware/error-handler";
-import { NotFound } from "./error/not-found";
-import contentRouter from "./routes/content";
 import { auth } from "./middleware/authentication";
+
+import { connectDB } from "./db/connect";
+import { config } from "./modules/config/config";
+
+import authRouter from "./routes/auth";
+import contentRouter from "./routes/content";
+
+import { NotFound } from "./error/not-found";
+import swaggerDocument from "./docs/swagger.json";
 
 c();
 
@@ -19,6 +24,14 @@ const app = express();
 // middlewares
 app.use(express.json());
 app.use(cors());
+
+app.use(
+  "/api-docs",
+  swaggerUi.serve,
+  swaggerUi.setup(swaggerDocument, {
+    swaggerOptions: {},
+  })
+);
 
 // routes
 app.use("/api/v1/auth", authRouter);
