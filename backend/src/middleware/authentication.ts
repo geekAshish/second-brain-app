@@ -2,10 +2,11 @@ import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { errors } from "../error";
 import { config } from "../modules/config/config";
+import { User } from "../models/user";
 
 const jwtSecret = config.get("access_jwt_scret");
 
-export const auth = (req: Request, res: Response, next: NextFunction) => {
+export const auth = async (req: Request, res: Response, next: NextFunction) => {
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
@@ -25,6 +26,12 @@ export const auth = (req: Request, res: Response, next: NextFunction) => {
     }
 
     if (!payload.userId) {
+      throw new errors.UnauthenticatedError("Authentication invalid");
+    }
+
+    const isAlreadyUser = await User.findOne({ _id: payload.userId });
+
+    if (!isAlreadyUser) {
       throw new errors.UnauthenticatedError("Authentication invalid");
     }
 

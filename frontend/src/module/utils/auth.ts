@@ -68,7 +68,7 @@ export const refreshTokenAPI = async (): Promise<
       if (refreshValid) {
         // If refresh token is valid, send a request to refresh the token
         const response = await axios.get(
-          `${BASE_URL}/user/public-api/v1/token`,
+          `${BASE_URL}/api/v1/auth/refresh-token`,
           {
             headers: {
               token: `Bearer ${refreshToken}`,

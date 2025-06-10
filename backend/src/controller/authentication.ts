@@ -36,7 +36,7 @@ export const register = async (req: Request, res: Response) => {
 
   res
     .status(StatusCodes.CREATED)
-    .json({ user: { username: username, email: email }, access_token: token });
+    .json({ user: { username: username, email: email }, token });
 };
 
 export const login = async (req: Request, res: Response) => {
@@ -64,7 +64,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const refresh = async (req: Request, res: Response) => {
-  const refreshToken = req.headers["authorization"];
+  const refreshToken: string | undefined = req.headers["token"] as string;
 
   if (!refreshToken) {
     res.status(StatusCodes.UNAUTHORIZED).json({ message: "Unauthorized" });
