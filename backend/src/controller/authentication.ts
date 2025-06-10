@@ -1,8 +1,10 @@
 import { Request, Response } from "express";
 import zod from "zod";
 import { StatusCodes } from "http-status-codes";
+import jwt, { JwtPayload, VerifyErrors } from "jsonwebtoken";
 import { User } from "../models/user";
 import { errors } from "../error";
+import { config } from "../modules/config/config";
 
 const registerShema = zod.object({
   username: zod.string({
@@ -58,5 +60,39 @@ export const login = async (req: Request, res: Response) => {
 
   const token = user.createJwt();
 
-  res.status(StatusCodes.OK).json({ user: { email }, access_token: token });
+  res.status(StatusCodes.OK).json({ user: { email }, token });
+};
+
+export const refresh = async (req: Request, res: Response) => {
+  const refreshToken = req.headers["authorization"];
+
+  if (!refreshToken) {
+    res.status(StatusCodes.UNAUTHORIZED).json({ message: "Unauthorized" });
+    return;
+  }
+
+  jwt.verify(
+    refreshToken,
+    config.get("refresh_jwt_scret"),
+    async (
+      err: VerifyErrors | null,
+      decoded: string | JwtPayload | undefined
+    ) => {
+      if (err || !decoded || typeof decoded === "string") {
+        res.status(406).json({ message: "Unauthorized" });
+        return;
+      }
+
+      const user = await User.findOne({ _id: decoded._id });
+
+      if (!user) {
+        res.status(StatusCodes.UNAUTHORIZED).json({ message: "Unauthorized" });
+        return;
+      }
+
+      const token = user.createJwt();
+
+      res.status(StatusCodes.OK).json({ token });
+    }
+  );
 };

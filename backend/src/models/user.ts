@@ -1,7 +1,8 @@
 import { InferSchemaType, model, Schema } from "mongoose";
-import bcrypt from "bcryptjs";
-import { config } from "../modules/config/config";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
+
+import { config } from "../modules/config/config";
 
 const UserSchema = new Schema({
   username: {
@@ -35,17 +36,31 @@ UserSchema.pre("save", async function () {
 
 // creating token
 UserSchema.methods.createJwt = function () {
-  return jwt.sign(
+  const access_token = jwt.sign(
     {
       username: this.username,
       email: this.email,
       userId: this._id,
     },
-    config.get("jwtScret"),
+    config.get("access_jwt_scret"),
     {
-      expiresIn: config.get("expiresIn"),
+      expiresIn: config.get("access_token_expires_in"),
     }
   );
+
+  const refresh_token = jwt.sign(
+    {
+      username: this.username,
+      email: this.email,
+      userId: this._id,
+    },
+    config.get("refresh_jwt_scret"),
+    {
+      expiresIn: config.get("refresh_token_expires_in"),
+    }
+  );
+
+  return { access_token, refresh_token };
 };
 
 // comparing password
