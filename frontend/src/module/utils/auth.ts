@@ -65,21 +65,21 @@ export const refreshTokenAPI = async (): Promise<
       } else {
         // If refresh token is expired or invalid, redirect to the login page
         clearTokenAndAccessToken();
-        // window.location.href = REDIRECT_PAGE_URL;
+        window.location.href = REDIRECT_PAGE_URL;
 
         return null;
       }
     } else {
       // If refresh token doesn't exist, redirect to the login page
       clearTokenAndAccessToken();
-      // window.location.href = REDIRECT_PAGE_URL;
+      window.location.href = REDIRECT_PAGE_URL;
       return null;
     }
   } catch (error) {
     console.error("Error while refreshing token:", error);
     // Redirect to the login page in case of an error
     clearTokenAndAccessToken();
-    // window.location.href = REDIRECT_PAGE_URL;
+    window.location.href = REDIRECT_PAGE_URL;
     return null;
   }
 };

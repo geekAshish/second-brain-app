@@ -68,7 +68,7 @@ const getInstance = (
               // Redirect to login page if refresh token is expired
               clearTokenAndAccessToken();
 
-              // window.location.href = REDIRECT_PAGE_URL;
+              window.location.href = REDIRECT_PAGE_URL;
             } else {
               // Handle other token refresh errors (e.g., redirect to login page)
               clearTokenAndAccessToken();
@@ -77,7 +77,7 @@ const getInstance = (
           }
         } else {
           clearTokenAndAccessToken();
-          // window.location.href = REDIRECT_PAGE_URL;
+          window.location.href = REDIRECT_PAGE_URL;
         }
       }
 
