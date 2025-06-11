@@ -1,3 +1,4 @@
+import { X } from "lucide-react";
 import { ReactNode } from "react";
 
 interface ChipInterface {
@@ -24,13 +25,12 @@ const Chip = ({
       className={`inline-flex items-center rounded-full ${bgColor} px-2 py-[2px] text-xs ${textColor} cursor-pointer`}
     >
       {icon && <span className="mr-1">{icon}</span>}
-      {label}{" "}
-      {onClickRemove && (
-        <span className="mr-1" onClick={() => onClickRemove(label)}>
-          {" "}
-          x
-        </span>
-      )}
+      {label}
+      <X
+        size={12}
+        className="ml-1 border border-gray-500 rounded-full"
+        onClick={() => onClickRemove?.(label)}
+      />
     </span>
   );
 };

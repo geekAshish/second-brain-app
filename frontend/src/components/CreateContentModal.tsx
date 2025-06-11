@@ -80,7 +80,7 @@ export function CreateContentModal({
     });
 
     if (value) {
-      setTags((prev) => [...prev, value]);
+      setTags((prev) => Array.from(new Set([...prev, value]).values()));
     }
   };
 
