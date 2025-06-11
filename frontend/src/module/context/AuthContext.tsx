@@ -74,8 +74,6 @@ const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onSuccessHandler = (data: any) => {
-    console.log(data);
-
     localStorage.setItem("access_token", data?.data?.token?.access_token);
     localStorage.setItem("refresh_token", data?.data?.token?.refresh_token);
     setUser(data?.user);

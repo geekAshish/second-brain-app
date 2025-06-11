@@ -64,7 +64,9 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const refresh = async (req: Request, res: Response) => {
-  const refreshToken: string | undefined = req.headers["token"] as string;
+  const refreshToken: string | undefined = (
+    req.headers["token"] as string
+  )?.split(" ")[1];
 
   if (!refreshToken) {
     res.status(StatusCodes.UNAUTHORIZED).json({ message: "Unauthorized" });
@@ -83,7 +85,7 @@ export const refresh = async (req: Request, res: Response) => {
         return;
       }
 
-      const user = await User.findOne({ _id: decoded._id });
+      const user = await User.findOne({ _id: decoded.userId });
 
       if (!user) {
         res.status(StatusCodes.UNAUTHORIZED).json({ message: "Unauthorized" });

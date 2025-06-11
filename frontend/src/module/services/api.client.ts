@@ -56,13 +56,11 @@ const getInstance = (
       // Handle token expiration scenario (error.response.status === 400)
       if (error.response && error.response.status === 401) {
         const refreshTokenValue = getRefreshToken();
-        // console.log("token expire : refresh token value", refreshTokenValue);
         if (refreshTokenValue) {
           try {
             // Refresh the access token using the refresh token
             const newAccessToken = await refreshTokenAPI();
             // Retry the failed request with the new access token
-            // console.log("token expire : new access token : ", newAccessToken);
             error.config.headers.Authorization = `Bearer ${newAccessToken}`;
             return instance(error.config);
           } catch (refreshError) {
@@ -70,8 +68,7 @@ const getInstance = (
               // Redirect to login page if refresh token is expired
               clearTokenAndAccessToken();
 
-              window.location.href = REDIRECT_PAGE_URL;
-              // console.log("token expire : 1");
+              // window.location.href = REDIRECT_PAGE_URL;
             } else {
               // Handle other token refresh errors (e.g., redirect to login page)
               clearTokenAndAccessToken();
@@ -80,8 +77,7 @@ const getInstance = (
           }
         } else {
           clearTokenAndAccessToken();
-          window.location.href = REDIRECT_PAGE_URL;
-          // console.log("token expire : 2");
+          // window.location.href = REDIRECT_PAGE_URL;
         }
       }
 

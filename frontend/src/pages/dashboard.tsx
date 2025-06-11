@@ -53,7 +53,6 @@ export default function Dashboard() {
       );
 
       if (node) {
-        // console.log("Attaching observer to", node);
         observer.current.observe(node);
       }
     },

@@ -18,25 +18,6 @@ export const getValueFromToken = (key: any) => {
   return value;
 };
 
-export const checkTokenExpireBeforeOneDay = () => {
-  const tokenExpirySecond = getValueFromToken("exp");
-  const currentDateSecond = Date.now() / 1000;
-  const oneDayInSeconds = 24 * 60 * 60;
-
-  const currentDate = new Date(Date.now());
-  const humanReadableCurrentDate = currentDate.toLocaleString();
-
-  const tokenExpiry = new Date(tokenExpirySecond * 1000);
-  const humanReadableDate = tokenExpiry.toLocaleString();
-
-  console.log("token expiry details", {
-    exp: humanReadableDate,
-    current: humanReadableCurrentDate,
-    expiresBeforeOneDay:
-      tokenExpirySecond - currentDateSecond <= oneDayInSeconds,
-  });
-};
-
 // Function to validate a JWT token
 const isTokenValid = (token: string): boolean => {
   try {
@@ -63,7 +44,6 @@ export const refreshTokenAPI = async (): Promise<
 
     if (refreshToken) {
       const refreshValid = isTokenValid(refreshToken);
-      // console.log("token expire : refresh Valid", refreshValid);
 
       if (refreshValid) {
         // If refresh token is valid, send a request to refresh the token
@@ -75,34 +55,31 @@ export const refreshTokenAPI = async (): Promise<
             },
           }
         );
-        const { accessToken: newAccessToken, refreshToken: newRefreshToken } =
-          response.data?.payload?.token || "";
+        const { access_token, refresh_token } = response.data?.token || "";
 
         // Store the new tokens in local storage
-        localStorage.setItem("access_token", newAccessToken?.token);
-        localStorage.setItem("refresh_token", newRefreshToken?.token);
-        return newAccessToken?.token;
+        localStorage.setItem("access_token", access_token);
+        localStorage.setItem("refresh_token", refresh_token);
+
+        return access_token;
       } else {
         // If refresh token is expired or invalid, redirect to the login page
         clearTokenAndAccessToken();
-        window.location.href = REDIRECT_PAGE_URL;
-        // console.log("token expire : refreshTokenAPI : 1");
+        // window.location.href = REDIRECT_PAGE_URL;
 
         return null;
       }
     } else {
       // If refresh token doesn't exist, redirect to the login page
       clearTokenAndAccessToken();
-      window.location.href = REDIRECT_PAGE_URL;
-      // console.log("token expire : refreshTokenAPI : 2");
+      // window.location.href = REDIRECT_PAGE_URL;
       return null;
     }
   } catch (error) {
     console.error("Error while refreshing token:", error);
     // Redirect to the login page in case of an error
     clearTokenAndAccessToken();
-    window.location.href = REDIRECT_PAGE_URL;
-    // console.log("token expire : refreshTokenAPI : 3");
+    // window.location.href = REDIRECT_PAGE_URL;
     return null;
   }
 };

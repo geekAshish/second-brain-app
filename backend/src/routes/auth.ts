@@ -7,6 +7,6 @@ authRouter.route("/register").post(register);
 
 authRouter.route("/login").post(login);
 
-authRouter.route("/refresh-token").post(refresh);
+authRouter.route("/refresh-token").get(refresh);
 
 export default authRouter;
