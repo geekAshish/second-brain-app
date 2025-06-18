@@ -10,6 +10,7 @@ import { CreateContentModal } from "@/components/CreateContentModal";
 
 import { useTags } from "@/module/services/hooks/useTags";
 import { useGetUpdateShareBrainStatusFetcher } from "@/module/services/hooks/useShare";
+import { useFileManager } from "@/module/context/FileManager";
 
 export default function Dashboard() {
   const observer = useRef<IntersectionObserver | null>(null);
@@ -17,6 +18,8 @@ export default function Dashboard() {
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<string>("");
+
+  const { selectedBrain } = useFileManager();
 
   const { data: shareUrlData, mutate: shareURLMutate } =
     useGetUpdateShareBrainStatusFetcher();
@@ -30,6 +33,7 @@ export default function Dashboard() {
   } = useContent({
     tag: selectedTagId,
     size: 3,
+    brainId: selectedBrain,
   });
   const { data: tags, refetch: refreshTags } = useTags();
 
@@ -74,6 +78,7 @@ export default function Dashboard() {
         selectedTagId={selectedTagId}
         selectTagHandler={selectTagHandler}
       />
+
       <div className="p-4 ml-52 min-h-screen bg-gray-100 border-2">
         <CreateContentModal
           open={modalOpen}
@@ -115,7 +120,7 @@ export default function Dashboard() {
 
         <div className="columns-1 sm:columns-3 gap-4 mt-10">
           {contentsData?.pages.map((contentsPage) => {
-            const items = contentsPage?.data?.data || [];
+            const items = contentsPage?.data?.contents || [];
 
             return items.map(
               (

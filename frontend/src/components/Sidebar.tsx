@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { Logo } from "@/icons/Logo";
+import { TreeRoot } from "./FileManager/TreeRoot";
 
 interface tags {
   count: number;
@@ -29,6 +30,11 @@ export function Sidebar({
           <Logo />
         </div>
         <p>Brainly</p>
+      </div>
+
+      {/* TODO: SHOULD BE ONE NODEACTION WORKING ON IT */}
+      <div>
+        <TreeRoot />
       </div>
       {tags && tags?.length > 0 && (
         <div className="mt-3">
