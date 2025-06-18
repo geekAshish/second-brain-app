@@ -9,7 +9,10 @@ import { ShareContent } from "../models/shareContent";
 
 import { random } from "../utils";
 import { errors } from "../error";
+import { NodeModel } from "../models/node";
+import { BrainModel } from "../models/brain";
 
+// NOT USING IT NOW IT'S OLD
 export const getAllContents = async (req: Request, res: Response) => {
   try {
     const userId = (req as any).user?.userId;
@@ -60,6 +63,80 @@ export const getAllContents = async (req: Request, res: Response) => {
   }
 };
 
+export const getContentByNodeId = async (req: Request, res: Response) => {
+  try {
+    const userId = (req as any).user?.userId;
+    const brainId = req.query.brainId as string | undefined;
+    const tag = req.query.tag as string | undefined;
+
+    const page: number = Number(req.query?.page || 1);
+    const size: number = Number(req.query?.size || 2);
+    const skip: number = (page - 1) * size;
+
+    if (!userId) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        success: false,
+        message: "Unauthorized: User ID missing",
+      });
+      return;
+    }
+
+    const brain = await BrainModel.findById(brainId);
+
+    if (!brain || !brain.contents || brain.contents.length === 0) {
+      res.status(StatusCodes.NOT_FOUND).json({
+        success: false,
+        message: "Brain not found or contains no contents",
+      });
+      return;
+    }
+
+    // making query
+    const query: any = {
+      _id: { $in: brain.contents },
+    };
+
+    if (tag) {
+      query.tags = { $in: [tag] };
+    }
+
+    // Total count for pagination info
+    // const totalContents = brain.contents.length;
+    const totalContents = await content.countDocuments(query);
+
+    const paginatedContents = await content
+      .find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(size)
+      .populate({
+        path: "tags",
+        select: "tag -_id",
+      });
+
+    if (!brain) {
+      res.status(StatusCodes.NOT_FOUND).json({ message: "Brain not found" });
+      return;
+    }
+
+    res.status(StatusCodes.OK).json({
+      contents: paginatedContents,
+      total: totalContents,
+      page,
+      size,
+    });
+    return;
+  } catch (error) {
+    console.error("Error fetching content by node ID:", error);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+      success: false,
+      message: "Failed to fetch contents",
+      // error: error.message,
+    });
+  }
+};
+
+// NOT USING IT NOW IT'S OLD
 export const addContent = async (req: Request, res: Response) => {
   const { type, title, link, tags, description } = req.body;
 
@@ -107,6 +184,86 @@ export const addContent = async (req: Request, res: Response) => {
     msg: "success",
     data: newContent,
   });
+};
+
+export const addContentToNode = async (req: Request, res: Response) => {
+  try {
+    const { type, link, title, description, tags, nodeId } = req.body;
+    const userId = (req as any).user?.userId;
+
+    if (!userId) {
+      res.status(StatusCodes.UNAUTHORIZED).json({ msg: "unauthorized" });
+      return;
+    }
+
+    if (!Array.isArray(tags) || tags.some((t) => typeof t !== "string")) {
+      res.status(StatusCodes.BAD_REQUEST).json({ msg: "Invalid tags format" });
+    }
+
+    const node = await NodeModel.findById(nodeId);
+    if (!node) {
+      res.status(StatusCodes.NOT_FOUND).json({ message: "Node not found" });
+      return;
+    }
+
+    // If node doesn't have brain, create one
+    let brain: any = null;
+    if (!node.brainId) {
+      brain = await BrainModel.create({ contents: [] });
+      node.brainId = brain._id;
+      await node.save();
+    } else {
+      brain = await BrainModel.findById(node.brainId);
+    }
+
+    if (!brain) {
+      res
+        .status(StatusCodes.INTERNAL_SERVER_ERROR)
+        .json({ message: "Failed to retrieve or create brain" });
+      return;
+    }
+
+    const tagObjectIds: Types.ObjectId[] = [];
+
+    for (const tagName of tags) {
+      // Try to find existing tag
+      let tag = await Tag.findOne({ tag: tagName });
+
+      if (tag) {
+        tag.count += 1;
+        await tag.save();
+      } else {
+        tag = await Tag.create({
+          tag: tagName,
+          count: 1,
+          users: userId,
+        });
+      }
+
+      tagObjectIds.push(tag._id);
+    }
+
+    const newContent = await content.create({
+      type,
+      link,
+      title,
+      description,
+      tags: tagObjectIds,
+      userId,
+    });
+
+    brain.contents.push(newContent._id);
+    await brain.save();
+
+    console.log(newContent);
+
+    res.status(StatusCodes.CREATED).json({ newContent, brainId: node.brainId });
+  } catch (error) {
+    console.error("Error adding content to node:", error);
+    res
+      .status(StatusCodes.INTERNAL_SERVER_ERROR)
+      .json({ message: "Server Error", error });
+  }
 };
 
 export const updateContent = async (req: Request, res: Response) => {

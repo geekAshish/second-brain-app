@@ -1,9 +1,11 @@
 import { Router } from "express";
 import {
   addContent,
+  addContentToNode,
   deleteContent,
   getAllContents,
   getAllTags,
+  getContentByNodeId,
   getShareContent,
   getShareLink,
   shareAllContents,
@@ -13,9 +15,11 @@ import {
 
 const contentRouter = Router();
 
-contentRouter.route("/").post(addContent);
+// contentRouter.route("/").post(addContent);
+contentRouter.route("/").post(addContentToNode);
 
-contentRouter.route("/").get(getAllContents);
+// contentRouter.route("/").get(getAllContents);
+contentRouter.route("/").get(getContentByNodeId);
 
 contentRouter.route("/tags").get(getAllTags);
 

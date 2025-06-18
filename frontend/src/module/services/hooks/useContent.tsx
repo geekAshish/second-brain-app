@@ -5,7 +5,7 @@ import {
   updateBrainFetcher,
 } from "../api/fetcher/brain";
 
-export function useContent({ tag, size }) {
+export function useContent({ brainId, tag, size }) {
   const {
     data,
     refetch,
@@ -19,14 +19,17 @@ export function useContent({ tag, size }) {
     isFetchingNextPage,
     hasNextPage,
   } = useInfiniteQuery({
-    queryKey: ["brain-content", tag],
+    queryKey: ["brain-content", tag, brainId],
     queryFn: ({ pageParam }: { pageParam: number }) =>
-      brainFetcher({ tag, size, page: pageParam }),
+      brainFetcher({ tag, size, page: pageParam, brainId }),
     initialPageParam: 1,
     refetchOnWindowFocus: false,
     getNextPageParam: (lastPage, allPages) => {
-      return lastPage?.data?.data?.length ? allPages?.length + 1 : undefined;
+      return lastPage?.data?.contents?.length
+        ? allPages?.length + 1
+        : undefined;
     },
+    enabled: brainId ? true : false,
   });
 
   return {

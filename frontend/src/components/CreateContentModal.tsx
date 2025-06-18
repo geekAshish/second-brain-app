@@ -5,6 +5,7 @@ import { Input } from "./Input";
 import { useCreateContent } from "@/module/services/hooks/useContent";
 import { onErrorNotify, onSuccessNotify } from "@/module/utils/toastNotify";
 import Chip from "./ui/chip";
+import { useFileManager } from "@/module/context/FileManager";
 
 interface PropType {
   open: boolean;
@@ -32,6 +33,7 @@ export function CreateContentModal({
   refresh,
   refreshTags,
 }: PropType) {
+  const { currentSelectedFile, setSelectedBrain } = useFileManager();
   const [contentObj, setContentObj] = useState({
     contentId: "",
     title: "",
@@ -43,6 +45,9 @@ export function CreateContentModal({
   const { mutate: createContentMutate } = useCreateContent();
 
   async function addContent() {
+    // don't save if don't selected node (file)
+    if (!currentSelectedFile) return;
+
     const type = getTypeFromLink(contentObj?.link || "");
     createContentMutate(
       {
@@ -51,9 +56,12 @@ export function CreateContentModal({
         type: type,
         description: contentObj?.description,
         tags: tags,
+        nodeId: currentSelectedFile?.nodeId,
       },
       {
-        onSuccess: () => {
+        onSuccess: (data) => {
+          setSelectedBrain(data?.data?.brainId);
+
           refresh();
           refreshTags();
           onClose();
