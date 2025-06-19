@@ -10,13 +10,23 @@ export const useGetUpdateShareBrainStatusFetcher = () => {
 };
 
 export const useGetShareBrainFetcher = (shareId) => {
-  const { data, isLoading, isError, error } = useQuery({
+  const { data, isLoading, isError, isSuccess, error } = useQuery({
     queryKey: ["get-share-brain", shareId],
     queryFn: () => getShareBrainFetcher(shareId),
   });
 
+  let shareData: any = [];
+
+  if (data?.data?.shared?.type === "brain") {
+    shareData = data?.data?.shared?.data?.contents;
+  }
+  if (data?.data?.shared?.type === "content") {
+    shareData = [data?.data?.shared?.data];
+  }
+
   return {
-    data: data?.data?.shared,
+    data: shareData,
+    isSuccess,
     isLoading,
     isError,
     error,

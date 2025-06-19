@@ -10,8 +10,6 @@ export default function ShareBrain() {
 
   const { data: brainData, error } = useGetShareBrainFetcher(shareId);
 
-  console.log(brainData);
-
   if (error) {
     return (
       <div className="h-screen flex items-center justify-center flex-col">

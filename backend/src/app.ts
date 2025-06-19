@@ -33,7 +33,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/content", auth, contentRouter);
 app.use("/api/v1/nodes", auth, nodeRouter);
-app.use("/api/v1/share", auth, shareRouter);
+app.use("/api/v1/share", shareRouter);
 
 app.use(NotFound as any);
 app.use(errorHandlerMiddleware as any);
