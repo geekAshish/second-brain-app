@@ -18,6 +18,8 @@ export const TreeNode = ({ node, refresh }: Props) => {
   const [loading, setLoading] = useState(false);
   const [showModal, setShowModal] = useState(false);
 
+  const [editing, setEditing] = useState(false);
+
   const { data: childrenNode, refetch: childrenNodeRefetch } =
     useGetChildrenNode(node?._id);
 
@@ -64,10 +66,12 @@ export const TreeNode = ({ node, refresh }: Props) => {
         {/* {node?.type === "folder" && (
           <button onClick={toggleExpand}>{expanded ? "-" : "+"}</button>
         )} */}
-        <span onClick={toggleExpand} className="cursor-pointer text-nowrap">
-          {node?.type === "folder" ? (expanded ? "📂" : "📁") : "📄"}{" "}
-          {node?.name}
-        </span>
+        {!editing && (
+          <span onClick={toggleExpand} className="cursor-pointer text-nowrap">
+            {node?.type === "folder" ? (expanded ? "📂" : "📁") : "📄"}{" "}
+            {node?.name}
+          </span>
+        )}
 
         <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
           <NodeActions
@@ -76,6 +80,8 @@ export const TreeNode = ({ node, refresh }: Props) => {
               nodename: node?.name,
               nodetype: node.type,
             }}
+            editing={editing}
+            setEditing={setEditing}
             refresh={onRefresh}
             openModal={() => setShowModal(true)}
           />

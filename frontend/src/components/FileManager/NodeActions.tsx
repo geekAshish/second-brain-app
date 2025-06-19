@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDeleteNode, useUpdateNode } from "@/module/services/hooks/useNode";
-import { Edit2, SquarePlus, Trash2 } from "lucide-react";
+import { Cross, Edit2, SquarePlus, Trash2 } from "lucide-react";
 
 interface Node {
   nodename: string | null;
@@ -10,12 +10,19 @@ interface Node {
 
 interface Props {
   node: Node;
+  editing: boolean;
+  setEditing: (b: boolean) => void;
   refresh: () => void;
   openModal: () => void;
 }
 
-export const NodeActions = ({ node, refresh, openModal }: Props) => {
-  const [editing, setEditing] = useState(false);
+export const NodeActions = ({
+  node,
+  editing,
+  setEditing,
+  refresh,
+  openModal,
+}: Props) => {
   const [name, setName] = useState(node?.nodename || "");
 
   const { mutate: updateMutate } = useUpdateNode();
@@ -48,7 +55,32 @@ export const NodeActions = ({ node, refresh, openModal }: Props) => {
   };
 
   return (
-    <div className="w-full">
+    <div className="w-full flex justify-between">
+      <div>
+        {editing && (
+          <div>
+            <input
+              value={name}
+              onChange={(e) => {
+                setName(e.target.value);
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleRename();
+                }
+              }}
+              className="border rounded px-1 max-w-28"
+            />
+            <button
+              onClick={() => setEditing(false)}
+              className="px-1 border border-b-slate-800 rounded-full"
+            >
+              x
+            </button>
+          </div>
+        )}
+      </div>
+
       <div>
         {/* <p className="font-bold mb-4">
           {node?.nodename ? node?.nodename : "File Manager"}
@@ -71,26 +103,6 @@ export const NodeActions = ({ node, refresh, openModal }: Props) => {
             <Trash2 size={12} />
           </button>
         </div>
-      </div>
-
-      <div>
-        {editing && (
-          <div>
-            <input
-              value={name}
-              onChange={(e) => {
-                setName(e.target.value);
-              }}
-              onKeyDown={(e) => {
-                if (e.key === "Enter") {
-                  handleRename();
-                }
-              }}
-              className="border rounded px-1"
-            />
-            <button onClick={() => setEditing(false)}>Cancel</button>
-          </div>
-        )}
       </div>
     </div>
   );
