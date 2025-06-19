@@ -50,14 +50,9 @@ export function Card({
   const pathname = location.pathname;
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
-  const [isShareable, setIsShareable] = useState<boolean>(false);
 
   const date = createdAt ? new Date(createdAt) : new Date();
   const formattedDate = date.toLocaleString("en-GB", { timeZone: "UTC" });
-
-  const shareToOtherHandler = () => {
-    setIsShareable((prev) => !prev);
-  };
 
   return (
     <div>
@@ -84,7 +79,7 @@ export function Card({
       </Modal>
 
       <div className="p-4 bg-white rounded-md border-gray-200 max-w-72 border min-h-48 min-w-72">
-        {contentId && pathname?.includes("dashboard") && (
+        {/* {contentId && pathname?.includes("dashboard") && (
           <div className="flex justify-end items-end">
             <label className="inline-flex items-center justify-end cursor-pointer">
               <span className="mr-1 text-sm font-medium text-gray-900 dark:text-gray-500">
@@ -100,7 +95,7 @@ export function Card({
               <div className="relative w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-1 peer-focus:ring-purple-300 dark:peer-focus:ring-purple-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full rtl:peer-checked:after:-translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:start-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-purple-500 dark:peer-checked:bg-purple-600"></div>
             </label>
           </div>
-        )}
+        )} */}
 
         <div className="flex justify-between">
           <div className="flex items-center text-md">
@@ -113,7 +108,7 @@ export function Card({
 
           <div className="flex items-center">
             <div className="p-2 text-gray-500 cursor-pointer">
-              {isShareable && (
+              {contentId && pathname?.includes("dashboard") && (
                 <div
                   onClick={() => {
                     handleShareBrain?.({ contentId: contentId });

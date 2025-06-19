@@ -19,7 +19,7 @@ export const TreeRoot = () => {
 
   return (
     <div className="mt-2">
-      <div className="flex justify-between">
+      <div className="flex justify-between bg-[]">
         <h2 className="font-semibold">File Manager</h2>
 
         <button className="text-green-600" onClick={() => setShowModal(true)}>

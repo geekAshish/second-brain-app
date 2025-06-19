@@ -19,7 +19,7 @@ export default function Dashboard() {
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
   const [selectedTagId, setSelectedTagId] = useState<string>("");
 
-  const { selectedBrain } = useFileManager();
+  const { selectedBrain, currentSelectedFile } = useFileManager();
 
   const {
     data: shareUrlData,
@@ -111,25 +111,31 @@ export default function Dashboard() {
             </div>
           )}
         </Modal>
-        <div className="flex justify-end gap-4">
-          <Button
-            onClick={() => {
-              setModalOpen(true);
-            }}
-            variant="primary"
-            text="Add content"
-            startIcon={<Plus />}
-          ></Button>
-          <Button
-            onClick={async () => {
-              handleShareBrain({ brainId: selectedBrain });
-              setOpenShareBrainModal(true);
-            }}
-            variant="secondary"
-            text="Share brain"
-            startIcon={<Share />}
-          ></Button>
-        </div>
+        {currentSelectedFile?.nodeId ? (
+          <div className="flex justify-end gap-4">
+            <Button
+              onClick={() => {
+                setModalOpen(true);
+              }}
+              variant="primary"
+              text="Add content"
+              startIcon={<Plus />}
+            ></Button>
+            <Button
+              onClick={async () => {
+                handleShareBrain({ brainId: selectedBrain });
+                setOpenShareBrainModal(true);
+              }}
+              variant="secondary"
+              text="Share brain"
+              startIcon={<Share />}
+            ></Button>
+          </div>
+        ) : (
+          <div className="flex justify-center items-center h-screen">
+            <p>Start with creating a file or choose one</p>
+          </div>
+        )}
 
         <div className="columns-1 sm:columns-3 gap-4 mt-10">
           {contentsData?.pages.map((contentsPage) => {

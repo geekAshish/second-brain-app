@@ -38,7 +38,7 @@ export function Sidebar({
       </div>
       {tags && tags?.length > 0 && (
         <div className="mt-3">
-          <div className="flex justify-between px-3">
+          <div className="flex justify-between">
             <p>Top brain</p>
 
             {selectedTagId && (
@@ -52,16 +52,16 @@ export function Sidebar({
               </button>
             )}
           </div>
-          <div className="flex flex-wrap gap-2 p-2">
+          <div className="flex flex-wrap gap-2 ">
             {tags?.map((tag) => (
               <button
                 key={tag._id}
-                className="flex items-center gap-2 bg-gray-100 text-gray-800 px-3 py-1 rounded-full shadow-sm hover:shadow-md transition-all"
+                className="flex items-center gap-2 bg-gray-100 text-gray-800 px-2 py-1 rounded-full shadow-sm hover:shadow-md transition-all"
                 onClick={() => {
                   selectTagHandler?.({ tagId: tag._id });
                 }}
               >
-                <span className="font-medium text-sm">{tag.tag}</span>
+                <span className="text-xs">{tag.tag}</span>
                 <span className="bg-gray-300 text-gray-700 text-xs px-2 py-0.5 rounded-full">
                   {tag.count}
                 </span>
