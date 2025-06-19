@@ -43,7 +43,7 @@ export default function AppRoutes() {
         }
       />
       <Route
-        path="/share-brain/:brainId"
+        path="/share-brain/:shareId"
         element={
           <Suspense>
             <ShareBrain />

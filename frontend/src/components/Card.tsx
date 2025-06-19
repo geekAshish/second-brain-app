@@ -1,8 +1,5 @@
 import { useState } from "react";
-import axios from "axios";
 import { Edit, Share, Twitter, Youtube } from "lucide-react";
-
-import { BACKEND_URL } from "../config";
 
 import { Modal } from "./ui/Modal";
 import { UpdateContentModal } from "./UpdateContentModal";
@@ -14,34 +11,13 @@ interface CardProps {
   // type: "twitter" | "youtube";
   description: string;
   contentId?: string;
+  shareUrlData?: any;
   type: string;
   createdAt?: Date;
   refresh?: () => void;
   refreshTags?: () => void;
+  handleShareBrain?: (b: { brainId?: string; contentId?: string }) => void;
 }
-
-const shareBrainFetcher = async ({
-  contentId,
-}: {
-  contentId: string | undefined;
-}) => {
-  const response = await axios.post(
-    `${BACKEND_URL}/api/v1/content/share-content`,
-    {
-      share: true,
-      contentId,
-    },
-    {
-      headers: {
-        Authorization: `Bearer ${localStorage.getItem("access_token")}`,
-      },
-    }
-  );
-
-  const shareUrl = response.data.hash;
-
-  return shareUrl;
-};
 
 function getYouTubeVideoId(url: string) {
   const regex =
@@ -67,21 +43,17 @@ export function Card({
   createdAt,
   refresh = () => {},
   refreshTags = () => {},
+  shareUrlData,
+  handleShareBrain,
 }: CardProps) {
   const location = useLocation();
   const pathname = location.pathname;
-  const [urlHash, setUrlHash] = useState("");
   const [modalOpen, setModalOpen] = useState(false);
   const [openShareBrainModal, setOpenShareBrainModal] = useState(false);
   const [isShareable, setIsShareable] = useState<boolean>(false);
 
   const date = createdAt ? new Date(createdAt) : new Date();
   const formattedDate = date.toLocaleString("en-GB", { timeZone: "UTC" });
-
-  const handleShareBrain = async () => {
-    const hash = await shareBrainFetcher({ contentId });
-    setUrlHash(hash);
-  };
 
   const shareToOtherHandler = () => {
     setIsShareable((prev) => !prev);
@@ -107,7 +79,7 @@ export function Card({
         onClose={() => setOpenShareBrainModal(false)}
       >
         <div>
-          <p>http://localhost:5173/share-brain/{urlHash}?type=content</p>
+          <p>http://localhost:5173/share-brain/{shareUrlData?.shareHash}</p>
         </div>
       </Modal>
 
@@ -144,7 +116,7 @@ export function Card({
               {isShareable && (
                 <div
                   onClick={() => {
-                    handleShareBrain();
+                    handleShareBrain?.({ contentId: contentId });
                     setOpenShareBrainModal(true);
                   }}
                 >

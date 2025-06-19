@@ -6,12 +6,9 @@ import {
   getAllContents,
   getAllTags,
   getContentByNodeId,
-  getShareContent,
-  getShareLink,
-  shareAllContents,
-  shareContent,
   updateContent,
 } from "../controller/content";
+import { createShare, getSharedContent } from "../controller/share";
 
 const contentRouter = Router();
 
@@ -27,12 +24,8 @@ contentRouter.route("/").put(updateContent);
 
 contentRouter.route("/").delete(deleteContent);
 
-contentRouter.route("/share-brain").post(shareAllContents);
+contentRouter.route("/share-brain").post(createShare);
 
-contentRouter.route("/share-content").post(shareContent);
-
-contentRouter.route("/:shareLink").get(getShareLink);
-
-contentRouter.route("/share-content/:shareLink").get(getShareContent);
+contentRouter.route("/share-content/:shareLink").get(getSharedContent);
 
 export default contentRouter;

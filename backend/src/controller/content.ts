@@ -3,9 +3,7 @@ import { Types } from "mongoose";
 import { StatusCodes } from "http-status-codes";
 
 import { Tag } from "../models/tag";
-import { link } from "../models/link";
 import { content } from "../models/content";
-import { ShareContent } from "../models/shareContent";
 
 import { random } from "../utils";
 import { errors } from "../error";
@@ -342,115 +340,4 @@ export const getAllTags = async (req: Request, res: Response) => {
       error: err,
     });
   }
-};
-
-export const shareAllContents = async (req: Request, res: Response) => {
-  const { share } = req.body;
-
-  if (share) {
-    const existingLink = await link.findOne({
-      userId: (req as any).user?.userId,
-    });
-
-    if (existingLink) {
-      res.json({ hash: existingLink.hash });
-      return;
-    }
-
-    const hash = random(10);
-    await link.create({
-      hash: hash,
-      userId: (req as any).user?.userId,
-    });
-
-    res.json({ hash });
-  } else {
-    await link.deleteOne({
-      userId: (req as any).user?.userId,
-    });
-
-    res.json({ msg: "Removed link" });
-  }
-};
-
-export const getShareLink = async (req: Request, res: Response) => {
-  const shareLink = (req as any)?.params?.shareLink;
-
-  const linkDetail = await link.findOne({
-    hash: shareLink,
-  });
-
-  if (!linkDetail) {
-    res.status(StatusCodes.NOT_FOUND).json({ msg: "not found" });
-    return; // early return
-  }
-
-  const contentDetail = await content
-    .find({
-      userId: linkDetail.userId,
-    })
-    .populate("userId", "username");
-
-  res.json({
-    content: contentDetail,
-  });
-};
-
-export const shareContent = async (req: Request, res: Response) => {
-  const { share, contentId } = req.body;
-  const userId = (req as any).user?.userId;
-
-  if (!userId) {
-    res.status(StatusCodes.UNAUTHORIZED).json({ msg: "unauthorized" });
-    return;
-  }
-
-  if (!contentId) {
-    res.status(StatusCodes.BAD_REQUEST).json({ msg: "Invalid content Id" });
-  }
-
-  if (share) {
-    const existingLink = await ShareContent.findOne({
-      contentId: contentId,
-    });
-
-    if (existingLink) {
-      res.json({ hash: existingLink.hash });
-      return;
-    }
-
-    const hash = random(10);
-    await ShareContent.create({
-      hash: hash,
-      userId: (req as any).user?.userId,
-      contentId: contentId,
-    });
-
-    res.json({ hash });
-  } else {
-    await ShareContent.deleteOne({
-      contentId: contentId,
-    });
-
-    res.json({ msg: "Removed link" });
-  }
-};
-
-export const getShareContent = async (req: Request, res: Response) => {
-  const shareLink = (req as any)?.params?.shareLink;
-
-  const linkDetail = await ShareContent.findOne({
-    hash: shareLink,
-  })
-    .populate({ path: "contentId" })
-    .populate({ path: "userId", select: "username" });
-
-  if (!linkDetail) {
-    res.status(StatusCodes.NOT_FOUND).json({ msg: "not found" });
-    return; // early return
-  }
-
-  res.json({
-    content: linkDetail,
-  });
 };

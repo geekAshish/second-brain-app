@@ -15,6 +15,7 @@ import nodeRouter from "./routes/node";
 
 import { NotFound } from "./error/not-found";
 import swaggerDocument from "./docs/swagger.json";
+import shareRouter from "./routes/share";
 
 c();
 
@@ -32,6 +33,7 @@ app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 app.use("/api/v1/auth", authRouter);
 app.use("/api/v1/content", auth, contentRouter);
 app.use("/api/v1/nodes", auth, nodeRouter);
+app.use("/api/v1/share", auth, shareRouter);
 
 app.use(NotFound as any);
 app.use(errorHandlerMiddleware as any);

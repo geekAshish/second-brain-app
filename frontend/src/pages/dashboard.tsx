@@ -21,8 +21,11 @@ export default function Dashboard() {
 
   const { selectedBrain } = useFileManager();
 
-  const { data: shareUrlData, mutate: shareURLMutate } =
-    useGetUpdateShareBrainStatusFetcher();
+  const {
+    data: shareUrlData,
+    mutate: shareURLMutate,
+    isError,
+  } = useGetUpdateShareBrainStatusFetcher();
 
   const {
     data: contentsData,
@@ -63,8 +66,14 @@ export default function Dashboard() {
     [isLoading, hasNextPage, fetchNextPage]
   );
 
-  const handleShareBrain = async () => {
-    shareURLMutate();
+  const handleShareBrain = async ({
+    brainId,
+    contentId,
+  }: {
+    brainId?: string;
+    contentId?: string;
+  }) => {
+    shareURLMutate({ brainId: brainId, contentId });
   };
 
   const selectTagHandler = ({ tagId }: { tagId: string }) => {
@@ -92,11 +101,15 @@ export default function Dashboard() {
           open={openShareBrainModal}
           onClose={() => setOpenShareBrainModal(false)}
         >
-          <div>
-            <p>
-              http://localhost:5173/share-brain/{shareUrlData?.hash}?type=brain
-            </p>
-          </div>
+          {isError ? (
+            <div>
+              <p>Please select a brain or share a content</p>
+            </div>
+          ) : (
+            <div>
+              <p>http://localhost:5173/share-brain/{shareUrlData?.shareHash}</p>
+            </div>
+          )}
         </Modal>
         <div className="flex justify-end gap-4">
           <Button
@@ -109,7 +122,7 @@ export default function Dashboard() {
           ></Button>
           <Button
             onClick={async () => {
-              handleShareBrain();
+              handleShareBrain({ brainId: selectedBrain });
               setOpenShareBrainModal(true);
             }}
             variant="secondary"
@@ -147,6 +160,8 @@ export default function Dashboard() {
                       createdAt={createdAt}
                       refresh={refetch}
                       refreshTags={refreshTags}
+                      shareUrlData={shareUrlData}
+                      handleShareBrain={handleShareBrain}
                     />
                   </div>
                 );
