@@ -137,7 +137,7 @@ export default function Dashboard() {
           </div>
         )}
 
-        <div className="columns-1 sm:columns-3 gap-4 mt-10">
+        <div className="columns-1 sm:columns-3 gap-0 mt-10">
           {contentsData?.pages.map((contentsPage) => {
             const items = contentsPage?.data?.contents || [];
 
