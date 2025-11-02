@@ -78,7 +78,7 @@ export function Card({
         </div>
       </Modal>
 
-      <div className="p-4 bg-white rounded-md border-gray-200 max-w-72 border min-h-48 min-w-72">
+      <div className="p-4 bg-white rounded-md border-gray-200 max-w-[23em] border min-h-48 min-w-72">
         {/* {contentId && pathname?.includes("dashboard") && (
           <div className="flex justify-end items-end">
             <label className="inline-flex items-center justify-end cursor-pointer">
