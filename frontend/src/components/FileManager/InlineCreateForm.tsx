@@ -1,56 +1,58 @@
-// components/FileManager/InlineCreateForm.tsx
-// (Assuming you have a mutation hook like this)
-// import { useCreateNode } from "@/module/services/hooks/useNode";
 import { FaFileAlt, FaFolder } from "react-icons/fa";
 import { useState } from "react";
 import { useCreateNode } from "@/module/services/hooks/useNode";
+import { AiOutlineLoading } from "react-icons/ai";
 
 interface Props {
   parentId: string;
   type: "file" | "folder";
   onComplete: () => void;
   onCancel: () => void;
-  onRefresh: () => void;
 }
 
 export const InlineCreateForm = ({
   parentId,
   type,
-  onRefresh,
   onComplete,
   onCancel,
 }: Props) => {
   const [name, setName] = useState("");
 
-  const { mutate: createNodeMutate } = useCreateNode();
-  
-    const handleSubmit = async (e: React.FormEvent) => {
-          e.preventDefault();
-          e.stopPropagation();
-      createNodeMutate(
-        { name, type, parentId },
-        {
-          onSuccess: () => {
-            setName("");
-            onRefresh();
-            onCancel();
-          },
-        }
-      );
-    };
+  const { mutate: createNodeMutate, isPending: isLoading } = useCreateNode();
 
-  // Stop propagation to prevent node click
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (name.trim() === "" || isLoading) {
+      onCancel();
+      return;
+    }
+
+    createNodeMutate(
+      { name: name.trim(), type, parentId },
+      {
+        onSuccess: onComplete,
+        onError: (err) => {
+          console.error("Failed to create node", err);
+          onCancel();
+        },
+      }
+    );
+  };
+
   const stopProp = (e: React.MouseEvent) => e.stopPropagation();
 
   return (
-    <div className="pl-4"> {/* Indent under parent */}
+    <div className="pl-4">
       <form
         onSubmit={handleSubmit}
         className="flex items-center p-1.5"
         onClick={stopProp}
       >
         <span className="mr-1.5">
-          {type === "folder" ? (
+          {isLoading ? (
+            <AiOutlineLoading className="animate-spin" />
+          ) : type === "folder" ? (
             <FaFolder className="text-blue-500" />
           ) : (
             <FaFileAlt className="text-gray-500" />
@@ -58,12 +60,15 @@ export const InlineCreateForm = ({
         </span>
         <input
           type="text"
-          placeholder={type === "file" ? "New file name..." : "New folder name..."}
+          placeholder={
+            type === "file" ? "New file name..." : "New folder name..."
+          }
           value={name}
           onChange={(e) => setName(e.target.value)}
           className="px-1 py-0.5 border rounded-md w-full text-sm"
           autoFocus
-          onBlur={onCancel} // Cancel on blur
+          disabled={isLoading}
+          onBlur={onCancel}
           onKeyDown={(e) => {
             if (e.key === "Escape") {
               e.stopPropagation();

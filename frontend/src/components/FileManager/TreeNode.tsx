@@ -1,12 +1,10 @@
 import { useState, useEffect } from "react";
-import { Node, ActionState } from "./TreeRoot"; // Import shared types
+import { Node, ActionState } from "./TreeRoot";
 import { useGetChildrenNode } from "@/module/services/hooks/useNode";
 
-// --- New Form Imports ---
 import { InlineEditForm } from "./InlineEditForm";
 import { InlineCreateForm } from "./InlineCreateForm";
 
-// Icon Imports
 import {
   FaFolder,
   FaFolderOpen,
@@ -18,7 +16,6 @@ import { AiOutlineLoading } from "react-icons/ai";
 interface Props {
   node: Node;
   refresh: () => void;
-  // --- New Props from TreeRoot ---
   selectedNode: Node | null;
   actionState: ActionState;
   onNodeSelect: (node: Node) => void;
@@ -39,37 +36,29 @@ export const TreeNode = ({
     data: childrenNode,
     refetch: childrenNodeRefetch,
     isLoading: isLoadingChildren,
-  } = useGetChildrenNode(node?._id); // Disable on mount
+  } = useGetChildrenNode(node?._id);
 
-  // --- Prop-driven State ---
   const isSelected = selectedNode?._id === node._id;
   const isEditing = isSelected && actionState.type === "editing";
   const isAdding = isSelected && actionState.type === "adding";
 
-  // --- Auto-expand if we're adding a child ---
   useEffect(() => {
     if (isAdding && !expanded) {
       setExpanded(true);
-      childrenNodeRefetch(); // Fetch children
+      childrenNodeRefetch();
     }
   }, [isAdding, expanded, childrenNodeRefetch]);
 
-  // Combined refresh
   const onRefresh = () => {
     refresh();
     childrenNodeRefetch();
   };
 
-  // --- *** THE FIX IS HERE *** ---
-
-  // 1. Handler for the main row click
   const onRowClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     
-    // ACTION 1: Select the node
     onNodeSelect(node); 
     
-    // ACTION 2: If it's a folder, toggle it
     if (node.type === "folder") {
       if (!expanded) {
         childrenNodeRefetch();
@@ -78,11 +67,9 @@ export const TreeNode = ({
     }
   };
 
-  // 2. Handler for the chevron button click
   const onChevronClick = (e: React.MouseEvent) => {
-    e.stopPropagation(); // <-- Prevents onRowClick from firing
+    e.stopPropagation();
 
-    // ACTION: Only toggle the folder
     if (node.type === "folder") {
       if (!expanded) {
         childrenNodeRefetch();
@@ -91,22 +78,18 @@ export const TreeNode = ({
     }
   };
 
-  // Dynamic class for highlighting
   const selectionClass = isSelected ? "bg-blue-100" : "hover:bg-gray-100";
 
   return (
     <div className="my-0.5 text-sm">
-      {/* Main interactive row */}
       <div
         className={`flex justify-between items-center group w-full p-1.5 rounded-md cursor-pointer ${selectionClass}`}
-        // Click handler is disabled during edit, otherwise uses the new onRowClick
         onClick={isEditing ? (e) => e.stopPropagation() : onRowClick}
       >
         <div className="flex items-center min-w-0">
-          {/* Expander Chevron */}
           {node?.type === "folder" && (
             <button
-              onClick={onChevronClick} // <-- Uses the separate chevron handler
+              onClick={onChevronClick}
               className="p-0.5 rounded-sm hover:bg-gray-200"
               aria-label={expanded ? "Collapse folder" : "Expand folder"}
             >
@@ -118,23 +101,20 @@ export const TreeNode = ({
             </button>
           )}
 
-          {/* Spacer for files */}
           {node?.type !== "folder" && <span className="w-4 h-4 mr-0.5" />}
 
-          {/* --- Conditional Rename Form --- */}
           {isEditing ? (
             <InlineEditForm
               node={node}
               onComplete={() => {
                 onActionComplete();
-                refresh(); // Refresh parent list
+                refresh();
               }}
               onCancel={onActionComplete}
             />
           ) : (
             <span
               className="flex items-center ml-1 text-gray-700 text-nowrap"
-              // <-- NO onClick here. Clicks fall through to the parent div's onRowClick.
             >
               <span className="mr-1.5">
                 {node?.type === "folder" ? (
@@ -151,7 +131,6 @@ export const TreeNode = ({
         </div>
       </div>
 
-      {/* Children Section (Indented) */}
       {expanded && (
         <div className="border-l border-gray-200 ml-1">
           {isLoadingChildren && (
@@ -161,28 +140,24 @@ export const TreeNode = ({
             </div>
           )}
 
-          {/* --- Conditional Create Form --- */}
           {isAdding && (
             <InlineCreateForm
               parentId={node._id}
               type={actionState.nodeType}
-              onRefresh={onRefresh}
               onComplete={() => {
                 onActionComplete();
-                childrenNodeRefetch(); // Refresh this node's children
+                childrenNodeRefetch();
               }}
               onCancel={onActionComplete}
             />
           )}
 
-          {/* Child Nodes */}
           {!isLoadingChildren &&
             childrenNode?.map((child: Node) => (
               <TreeNode
                 key={child?._id}
                 node={child}
-                refresh={onRefresh} // This node's refresh
-                // --- Pass all state down ---
+                refresh={onRefresh}
                 selectedNode={selectedNode}
                 actionState={actionState}
                 onNodeSelect={onNodeSelect}
